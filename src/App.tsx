@@ -22,7 +22,7 @@ function App() {
   
   let compares: any[] = [];
 
-  const numOfCompares = 5;
+  const numOfCompares = 2;
   const numOfHandsToCompares = 2;
   const numOfCardsDrawn = 5;
 
@@ -65,11 +65,10 @@ function App() {
           <div>
             <div className="row">
                 <div className="col s2">Compare Hands</div>
-                {
+                {/* {
                   [...Array(numOfHandsToCompares)].map((value, index:any) => {
-                    return <div className="col s5">Player {index + 1}</div>
                   })
-                }
+                } */}
             </div>
           </div>
 
@@ -104,22 +103,48 @@ function printHand(solvedHand: any) {
 
   const handInCardCode = solvedHand.cards.join(', ');
   
-  const winner = solvedHand.isWinner ? <div> Is Winner! </div> : '';
+  const winner = solvedHand.isWinner ? <strong> wins! </strong> : '';
 
   return (
     <div className="col s5">
       {/* <div>Player { solvedHand.playerId }:</div> */}
-      <div>{ handInCardCode}</div>
-      {
-        solvedHand.cards.map((card: any) => {
-          // return null;
-          return <img src={ CardCodeToImage(CardCodeFromCard(card)) } />
-        })
-      }
-      <div>{ solvedHand.descr }</div>
-      { winner }
+      {/* <div>{ handInCardCode}</div> */}
+
+      <div className="row">
+        <div className="col s5">Player {solvedHand.playerId} {winner} </div>
+      </div>
+      <div className="row">
+        <div className="col s5">{ solvedHand.descr }</div>
+      </div>
+
+      <div className="row">
+        {
+          solvedHand.cards.map((card: any) => {
+            // return null;
+            return <img className="col s2" src={ CardCodeToImage(CardCodeFromCard(card)) } />
+          })
+        }
+      </div>
+
+      <div className="row">
+        {
+          solvedHand.cards.map((card: any) => {
+            // return null;
+            return (
+              <div className="input-field col s2">
+                <input id="card1" type="text" className="validate" onChange={haha} value={ CardCodeFromCard(card) } />
+              </div>
+            );
+          })
+        }
+      </div>
     </div>
   );
 
 }
+
+function haha() {
+  console.log('haha');
+}
+
 export default App;

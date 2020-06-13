@@ -5,3 +5,11 @@ header {
 .App {
    text-align: center; 
 } */
+
+.winner.player-title {
+  font-size: 1.2em;
+}
+
+.brand-logo {
+  margin-left: 0.5em;
+}

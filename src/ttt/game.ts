@@ -6,7 +6,7 @@
  * https://opensource.org/licenses/MIT.
  */
 
-function IsVictory(cells) {
+function IsVictory(cells: any) {
   const positions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -18,7 +18,7 @@ function IsVictory(cells) {
     [2, 4, 6]
   ];
 
-  const isRowComplete = row => {
+  const isRowComplete = (row: any[]) => {
     const symbols = row.map(i => cells[i]);
     return symbols.every(i => i !== null && i === symbols[0]);
   };
@@ -34,7 +34,7 @@ const TicTacToe = {
   }),
 
   moves: {
-    clickCell(G, ctx, id) {
+    clickCell(G: any, ctx: any, id: any) {
       if (G.cells[id] === null) {
         G.cells[id] = ctx.currentPlayer;
       }
@@ -43,17 +43,17 @@ const TicTacToe = {
 
   turn: { moveLimit: 1 },
 
-  endIf: (G, ctx) => {
+  endIf: (G: any, ctx: any) => {
     if (IsVictory(G.cells)) {
       return { winner: ctx.currentPlayer };
     }
-    if (G.cells.filter(c => c === null).length === 0) {
+    if (G.cells.filter((c: any) => c === null).length === 0) {
       return { draw: true };
     }
   },
 
   ai: {
-    enumerate: G => {
+    enumerate: (G: any) => {
       let moves = [];
       for (let i = 0; i < 9; i++) {
         if (G.cells[i] === null) {

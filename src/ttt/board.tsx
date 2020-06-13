@@ -10,7 +10,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './board.css';
 
-class Board extends React.Component {
+interface Props {
+  G: any;
+  ctx: any;
+  moves: any;
+  playerID: string;
+  isActive: boolean;
+  isMultiplayer: boolean;
+}
+
+class Board extends React.Component<Props> {
+
   static propTypes = {
     G: PropTypes.any.isRequired,
     ctx: PropTypes.any.isRequired,
@@ -20,13 +30,14 @@ class Board extends React.Component {
     isMultiplayer: PropTypes.bool,
   };
 
-  onClick = id => {
+  onClick = (id: any) => {
     if (this.isActive(id)) {
       this.props.moves.clickCell(id);
     }
   };
+  
 
-  isActive(id) {
+  isActive(id: any) {
     if (!this.props.isActive) return false;
     if (this.props.G.cells[id] !== null) return false;
     return true;

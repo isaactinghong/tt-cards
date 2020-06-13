@@ -5,7 +5,7 @@ import TicTacToe from './tic-tac-toe/game';
 import ReactDOM, { render } from 'react-dom';
 import Board from './tic-tac-toe/board';
 import { Client } from "boardgame.io/react";
-import { PlayingDeck } from './tt-cards-game/playing-cards';
+import PlayingDeck, { CardCodeToImageFilename, CardCodeToImage, CardCodeFromCard } from './tt-cards-game/playing-cards';
 const Hand = require('pokersolver').Hand;
 
 
@@ -61,19 +61,19 @@ function App() {
         Chinese Poker: Thirteen Cards
       </h1>
       <div>
-        <table>
-          <thead>
-            <tr>
-                <th>#</th>
+        <div>
+          <div>
+            <div className="row">
+                <div className="col s2">Compare Hands</div>
                 {
                   [...Array(numOfHandsToCompares)].map((value, index:any) => {
-                    return <th>Player {index + 1}</th>
+                    return <div className="col s5">Player {index + 1}</div>
                   })
                 }
-            </tr>
-          </thead>
+            </div>
+          </div>
 
-          <tbody>
+          <div>
             { 
               compares.map((solvedHands:any, compareIndex: number) => {
                 
@@ -82,18 +82,18 @@ function App() {
                 })
 
                 return (
-                  <tr>
-                    <td>
-                      Compare #{ compareIndex + 1 }
-                    </td>
+                  <div className="row">
+                    <div className="col s2">
+                      #{ compareIndex + 1 }
+                    </div>
                     {displayHands}
-                  </tr>
+                  </div>
                   
                 );
               })
             }
-          </tbody>
-        </table>
+          </div>
+        </div>
         {/* <TTTBoard /> */}
       </div>
     </div>
@@ -107,12 +107,18 @@ function printHand(solvedHand: any) {
   const winner = solvedHand.isWinner ? <div> Is Winner! </div> : '';
 
   return (
-    <td>
+    <div className="col s5">
       {/* <div>Player { solvedHand.playerId }:</div> */}
       <div>{ handInCardCode}</div>
+      {
+        solvedHand.cards.map((card: any) => {
+          // return null;
+          return <img src={ CardCodeToImage(CardCodeFromCard(card)) } />
+        })
+      }
       <div>{ solvedHand.descr }</div>
       { winner }
-    </td>
+    </div>
   );
 
 }

@@ -8,27 +8,6 @@ import { Client } from "boardgame.io/react";
 import { PlayingDeck } from './tt-cards-game/playing-cards';
 const Hand = require('pokersolver').Hand;
 
-function printHand(solvedHand: any, isWinner: boolean) {
-
-  const handInCardCode = solvedHand.cards.join(', ');
-  // console.log(solvedHand.playerId);
-  // console.log(handInCardCode);
-  // console.log(solvedHand.name); // Two Pair
-  // console.log(solvedHand.descr); // Two Pair, A's & Q's
-
-  const winner = isWinner ? <div> Is Winner! </div> : '';
-
-  return (
-    <div>
-      <div>{ solvedHand.playerId }</div>
-      <div>{ handInCardCode}</div>
-      <div>{ solvedHand.descr }</div>
-      { winner }
-      ---------------
-    </div>
-  );
-
-}
 
 function App() {
   
@@ -41,80 +20,100 @@ function App() {
 
   // const deck = new decks.StandardDeck();
   
-  const deck = PlayingDeck();
-  let solvedHands = [];
+  let compares: any[] = [];
+
+  const numOfCompares = 5;
+  const numOfHandsToCompares = 2;
   const numOfCardsDrawn = 5;
-  let playerIndex = 1;
-  while (deck.remaining() >= numOfCardsDrawn) {
-    const hand = deck.draw(numOfCardsDrawn);
-    const solvedHand = Hand.solve(hand);
-    solvedHand.playerId = playerIndex;
-    solvedHands.push(solvedHand);
-    playerIndex++;
+
+  for (let i = 0; i < numOfCompares; i++) {
+
+    let deck = PlayingDeck();
+    let playerIndex = 1;
+    let solvedHands = [];
+
+    for (let j = 0; j < numOfHandsToCompares; j++) {
+      const hand = deck.draw(numOfCardsDrawn);
+      console.log(hand);
+      const solvedHand = Hand.solve(hand);
+      solvedHand.playerId = playerIndex;
+      solvedHands.push(solvedHand);
+      playerIndex++;
+    }
+
+    const winnerHands = Hand.winners(solvedHands);
+    const winnerPlayerIds = winnerHands.map((hand: any) => hand.playerId);
+    for (const solvedHand of solvedHands) {
+      if (winnerPlayerIds.some((winnerPlayerId: any) => winnerPlayerId == solvedHand.playerId)) {
+        solvedHand.isWinner = true;
+      }
+    }
+
+    compares.push(solvedHands);
   }
 
-  const winnerHands = Hand.winners(solvedHands);
-
-  for (const solvedHand of solvedHands) {
-    printHand(solvedHand, winnerHands.some((hand:any) => hand.playerId == solvedHand.playerId));
-
-    console.log('------------------------')
-  }
-  
-  console.log('------- winner -----------')
-  for (const winnerHand of winnerHands) {
-    printHand(winnerHand, true);
-    // console.log('winner:', winnerHand);
-  }
-
-  
-  // console.log('winner:', winnerHand);
-
-  
+  console.log(compares);
 
 
   return (
     <div className="App">
-      <header className="App-header">
+      <h1 className="teal-text text-darken-3 center-align">
         Chinese Poker: Thirteen Cards
-      </header>
+      </h1>
       <div>
+        <table>
+          <thead>
+            <tr>
+                <th>#</th>
+                {
+                  [...Array(numOfHandsToCompares)].map((value, index:any) => {
+                    return <th>Player {index + 1}</th>
+                  })
+                }
+            </tr>
+          </thead>
+
+          <tbody>
+            { 
+              compares.map((solvedHands:any, compareIndex: number) => {
+                
+                const displayHands = solvedHands.map((solvedHand: any) => {
+                  return printHand(solvedHand);
+                })
+
+                return (
+                  <tr>
+                    <td>
+                      Compare #{ compareIndex + 1 }
+                    </td>
+                    {displayHands}
+                  </tr>
+                  
+                );
+              })
+            }
+          </tbody>
+        </table>
         {/* <TTTBoard /> */}
-
-        {solvedHands.map((solvedHand, index) => {
-          return printHand(solvedHand, winnerHands.some((hand:any) => hand.playerId == solvedHand.playerId))
-        })}
-
-        {/* { tttBoard } */}
       </div>
     </div>
   );
 }
 
+function printHand(solvedHand: any) {
+
+  const handInCardCode = solvedHand.cards.join(', ');
+  
+  const winner = solvedHand.isWinner ? <div> Is Winner! </div> : '';
+
+  return (
+    <td>
+      {/* <div>Player { solvedHand.playerId }:</div> */}
+      <div>{ handInCardCode}</div>
+      <div>{ solvedHand.descr }</div>
+      { winner }
+    </td>
+  );
+
+}
 export default App;
-
-/*
- * Copyright 2017 The boardgame.io Authors.
- *
- * Use of this source code is governed by a MIT-style
- * license that can be found in the LICENSE file or at
- * https://opensource.org/licenses/MIT.
- */
-
-// import React from "react";
-// import { render } from "react-dom";
-// import { Client } from "boardgame.io/react";
-// import TicTacToe from "./ttt/game";
-// import Board from "./ttt/board";
-
-// const App = Client({
-//   game: TicTacToe,
-//   board: Board,
-//   // The number of players.
-//   numPlayers: 2
-// });
-
-
-// render(<App />, document.getElementById("root"));
-
-// export default App;

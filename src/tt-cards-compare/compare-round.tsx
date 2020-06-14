@@ -4,6 +4,9 @@ import { Card } from "./card";
 import produce from "immer";
 const Hand = require('pokersolver').Hand;
 
+function hasDuplicates(array: any[]) {
+  return (new Set(array)).size !== array.length;
+}
 
 export const CompareHand = (props: { compareRound: CompareRound}) => {
 
@@ -14,9 +17,11 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   const solveHands = (hands: any[]) => {
     const solvedHands: any[] = [];
     let playerIndex = 1;
+
     hands.map((hand: any) => {
       // console.log(hand);
       const solvedHand = Hand.solve(hand);
+
       solvedHand.playerId = playerIndex;
       solvedHands.push(solvedHand);
       playerIndex++;
@@ -42,19 +47,19 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
     const winner = solvedHand.isWinner ? <strong> wins! </strong> : '';
   
     return (
-      <div className="col s5">
+      <div className="col s6" key={handIndex}>
         <div className="row">
           <div className={"col s5 player-title " + (solvedHand.isWinner ? 'winner' : '')}>Player {solvedHand.playerId} {winner} </div>
         </div>
         <div className="row">
-          <div className="col s5">{ solvedHand.descr }</div>
+          <div className="col s6">{ solvedHand.descr }</div>
         </div>
   
         <div className="row">
           {
             hands[handIndex].map((cardCode: any, cardIndex: number) => {
               return (
-                <div className="col s2">
+                <div className="col s2" key={cardIndex}>
                   <Card 
                     handIndex={handIndex}
                     cardIndex={cardIndex}
@@ -73,6 +78,13 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   
   const [solvedHands, setSolvedHands] = useState(solveHands(hands));
 
+  const checkDuplicateCards = (hands: any[]) => {
+    return (hasDuplicates([].concat(...hands))) 
+  }
+
+
+  const [hasDuplicateCard, setHasDuplicateCard] = useState(checkDuplicateCards(hands));
+
   const setCard = (handIndex: number, cardIndex: number, cardCode: string) => {
     // console.log('hands:',hands);
     // console.log('setCard:', handIndex, cardIndex, cardCode);
@@ -83,6 +95,8 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
 
     // set the card to hands
     setHands(newHands)
+
+    setHasDuplicateCard(checkDuplicateCards(newHands));
 
     // solveHands
     const solvedHands = solveHands(newHands);
@@ -96,8 +110,13 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   
 
   return (
-    <div>
-      { solvedHands.map((solvedHand: any, handIndex: number) => printHand(solvedHand, handIndex)) }
+    <div className="col s10">
+      <div className="row">
+        <div className="col s12">{ hasDuplicateCard ? 'Has Duplicate Cards...' : ''}</div>
+      </div>
+      <div className="row">
+        { solvedHands.map((solvedHand: any, handIndex: number) => printHand(solvedHand, handIndex)) }
+      </div>
     </div>
   );
 

@@ -8,6 +8,7 @@ export interface CompareRound {
   deck: any;
   hands: any[];
   solvedHands: any[];
+  hasDuplicateCard: boolean
 }
 
 interface MainComparesState {
@@ -113,12 +114,12 @@ class MainCompares extends React.Component<Props, MainComparesState> {
               this.state.compares.map((compareRound:CompareRound, compareIndex: number) => {
                 
                 return (
-                  <div className="row">
+                  <div className="row" key={compareIndex}>
                     <div className="col s2">
                       #{ compareIndex + 1 }
                     </div>
 
-                    <CompareHand compareRound={compareRound}  />
+                    <CompareHand compareRound={compareRound} />
                   </div>
                 );
               })

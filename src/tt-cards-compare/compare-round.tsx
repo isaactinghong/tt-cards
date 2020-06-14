@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { CardCodeFromCard, CardCodeToImage } from "../tt-cards-game/playing-cards";
 import { CompareRound } from "./main-compares";
-import produce from "immer";
 import { Card } from "./card";
 
 

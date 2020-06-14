@@ -1,6 +1,5 @@
 const Deck = require('card-deck');
 
-
 export const CardCodeToImageFilename = new Map<string, string>([
   ['Ad', 'card_1_1.png'],
   ['2d', 'card_1_2.png'],
@@ -56,7 +55,7 @@ export const CardCodeToImageFilename = new Map<string, string>([
   ['Ks', 'card_4_13.png'],
 ]);
 
-const playingCards = [
+const PlayingCards = [
   'Ad',
   '2d',
   '3d',
@@ -109,20 +108,25 @@ const playingCards = [
   'Js',
   'Qs',
   'Ks',
-]
+];
+
+export function IsPlayingCard(cardCode: string) {
+  return PlayingCards.includes(cardCode);
+}
 
 export function CardCodeToImage(cardCode: string) {
-  
-  return require('./assets/cards/'+ CardCodeToImageFilename.get(cardCode));
+
+  if (IsPlayingCard(cardCode))
+    return require('./assets/cards/'+ CardCodeToImageFilename.get(cardCode));
+  return null;
 }
 
 export default function PlayingDeck() {
-
-  const deck = new Deck(playingCards);
+  
+  const deck = new Deck([...PlayingCards]);
   deck.shuffle();
   
   return deck;
-
 }
 
 export function CardCodeFromCard(card: any) {

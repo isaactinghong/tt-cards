@@ -48,12 +48,6 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   
     return (
       <div className="col s6" key={handIndex}>
-        <div className="row">
-          <div className={"col s5 player-title " + (solvedHand.isWinner ? 'winner' : '')}>Player {solvedHand.playerId} {winner} </div>
-        </div>
-        <div className="row">
-          <div className="col s6">{ solvedHand.descr }</div>
-        </div>
   
         <div className="row">
           {
@@ -70,6 +64,12 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
               )
             })
           }
+        </div>
+        <div className="row">
+          <div className={"col s12 player-title " + (solvedHand.isWinner ? 'winner' : '')}>Player {solvedHand.playerId} {winner} </div>
+        </div>
+        <div className="row">
+          <div className="col s12">{ solvedHand.descr }</div>
         </div>
       </div>
     );
@@ -112,10 +112,10 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   return (
     <div className="col s10">
       <div className="row">
-        <div className="col s12">{ hasDuplicateCard ? 'Has Duplicate Cards...' : ''}</div>
+        { solvedHands.map((solvedHand: any, handIndex: number) => printHand(solvedHand, handIndex)) }
       </div>
       <div className="row">
-        { solvedHands.map((solvedHand: any, handIndex: number) => printHand(solvedHand, handIndex)) }
+        <div className="col s12">{ hasDuplicateCard ? 'Has Duplicate Cards...' : ''}</div>
       </div>
     </div>
   );

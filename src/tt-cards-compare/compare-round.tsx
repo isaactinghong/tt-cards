@@ -7,13 +7,13 @@ import { Card } from "./card";
 
 export const CompareHand = (props: { compareRound: CompareRound}) => {
 
-  const [formData, setFormData] = useState(props.compareRound);
+  const [compareRound, setCompareRound] = useState(props.compareRound);
 
   const { 
     deck, 
     hands, 
     solvedHands 
-  } = formData;
+  } = compareRound;
   
   
 
@@ -42,26 +42,9 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
               // return null;
               return (
                 <div className="col s2">
-                  <Card card={card} />
-                  {/* <img alt={CardCodeFromCard(card)} className="z-depth-2" src={ CardCodeToImage(CardCodeFromCard(card)) } /> */}
+                  <Card card={card} compareRound={compareRound} />
                 </div>
               )
-            })
-          }
-        </div>
-  
-        <div className="row">
-          {
-            solvedHand.cards.map((card: any) => {
-              // return null;
-              return (
-                <div className="input-field col s2">
-                  <input id="card1" type="text" className="validate"
-                  //  onChange={(e) => this.changeCard(compareRound, solvedHand, e)} 
-                   value={ CardCodeFromCard(card) } 
-                   />
-                </div>
-              );
             })
           }
         </div>

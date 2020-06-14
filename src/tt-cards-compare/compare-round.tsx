@@ -15,7 +15,7 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
     const solvedHands: any[] = [];
     let playerIndex = 1;
     hands.map((hand: any) => {
-      console.log(hand);
+      // console.log(hand);
       const solvedHand = Hand.solve(hand);
       solvedHand.playerId = playerIndex;
       solvedHands.push(solvedHand);
@@ -26,7 +26,7 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
 
   const determineWinner = (solvedHands: any[]) => {
     
-    console.log('solvedHands', solvedHands);
+    // console.log('solvedHands', solvedHands);
 
     const winnerHands = Hand.winners(solvedHands);
     const winnerPlayerIds = winnerHands.map((hand: any) => hand.playerId);
@@ -38,17 +38,11 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   }
 
   const printHand = (solvedHand: any, handIndex: number) => {
-  
-    // const handInCardCode = solvedHand.cards.join(', ');
     
     const winner = solvedHand.isWinner ? <strong> wins! </strong> : '';
   
-  
     return (
       <div className="col s5">
-        {/* <div>Player { solvedHand.playerId }:</div> */}
-        {/* <div>{ handInCardCode}</div> */}
-  
         <div className="row">
           <div className={"col s5 player-title " + (solvedHand.isWinner ? 'winner' : '')}>Player {solvedHand.playerId} {winner} </div>
         </div>
@@ -80,8 +74,8 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   const [solvedHands, setSolvedHands] = useState(solveHands(hands));
 
   const setCard = (handIndex: number, cardIndex: number, cardCode: string) => {
-    console.log('hands:',hands);
-    console.log('setCard:', handIndex, cardIndex, cardCode);
+    // console.log('hands:',hands);
+    // console.log('setCard:', handIndex, cardIndex, cardCode);
 
     const newHands = produce(hands, (hands: any) => {
       hands[handIndex][cardIndex] = cardCode;

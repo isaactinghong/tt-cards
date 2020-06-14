@@ -26,17 +26,28 @@ class MainCompares extends React.Component<Props, MainComparesState> {
   constructor(props: any) {
     super(props);
     // Don't call this.setState() here!
-    
     this.state = {
-      numOfCompares: 2,
+      numOfCompares: 3,
       numOfHandsToCompares: 2,
       numOfCardsDrawn: 5,
       compares: [],
     };
+
+    const compares = this.refreshCompares();
+
+    this.state = {
+      ...this.state,
+      compares: compares,
+    };
+    
+    // this.updateFormData = this.updateFormData.bind(this);
+  }
+
+  refreshCompares(numOfCompares: number = this.state.numOfCompares) {
     
     const comparesArray: any[] = [];
 
-    for (let i = 0; i < this.state.numOfCompares; i++) {
+    for (let i = 0; i < numOfCompares; i++) {
 
       let deck = PlayingDeck();
 
@@ -44,29 +55,56 @@ class MainCompares extends React.Component<Props, MainComparesState> {
       for (let j = 0; j < this.state.numOfHandsToCompares; j++) {
         hands.push(deck.draw(this.state.numOfCardsDrawn));
       }
-
-      // const solvedHands: any[] = this.solveHands(hands);
-
-      // this.determineWinner(solvedHands);
-
       comparesArray.push({
         deck,
         hands,
-        // solvedHands,
       });
     }
-
-    this.state = {
-      ...this.state,
-      compares: comparesArray,
-    };
+    return comparesArray;
   }
+  
+  updateFormData(event: any) {
+    console.log(event.target.name, event.target.value);
+    
+    this.setState({
+      ...this.state,
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  updateNumOfCompares(event: any) {
+    console.log(event.target.name, event.target.value);
+    
+    this.setState({
+      ...this.state,
+      compares: this.refreshCompares(event.target.value),
+      [event.target.name]: event.target.value,
+    });
+  }
+
 
   render() {
       
     
     return (
       <div>
+        <form action="#" className="form-parameters">
+
+          <div className="row">
+          <div className="col s12">
+            <div className="input-field inline">
+              <input 
+                type="number" 
+                name="numOfCompares" 
+                min="1"
+                value={this.state.numOfCompares}
+                onChange={(e) => this.updateNumOfCompares(e)}
+              />
+              <label>Number of compares:</label>
+            </div>
+          </div>
+        </div>
+        </form>
         <div>
           <h5 className="page-title teal-text text-darken-3">Compare Hands</h5>
 
@@ -74,16 +112,11 @@ class MainCompares extends React.Component<Props, MainComparesState> {
             { 
               this.state.compares.map((compareRound:CompareRound, compareIndex: number) => {
                 
-                // const displayHands = compareRound.solvedHands.map((solvedHand: any) => {
-                //   return this.printHand(solvedHand, compareRound);
-                // })
-
                 return (
                   <div className="row">
                     <div className="col s2">
                       #{ compareIndex + 1 }
                     </div>
-                    {/* {displayHands} */}
 
                     <CompareHand compareRound={compareRound}  />
                   </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import HandCompare from './tt-cards-compare/hand-compare'
+import CompareHands from './tt-cards-compare/compare-hands'
 
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
         </div>
       </nav>
       {/* <TTTBoard /> */}
-      <HandCompare />
+      <CompareHands />
     </div>
   );
 }

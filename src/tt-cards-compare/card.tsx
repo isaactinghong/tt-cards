@@ -5,15 +5,16 @@ const PokerCard = require('pokersolver').Card;
 
 
 export const Card = (props: {
-  compareRound: CompareRound,
-  card: any,
+  // compareRound: CompareRound,
+  handIndex: number,
+  cardIndex: number,
+  cardCode: any,
+  setCard: any,
 }) => {
 
-  const [compareRound, setCompareRound] = useState(props.compareRound);
-  const [card, setCard] = useState(props.card);
-  const [cardInput, setCardInput] = useState(CardCodeFromCard(props.card));
-
-  console.log('card:', card);
+  // const [compareRound, setCompareRound] = useState(props.compareRound);
+  const [card, setCard] = useState(props.cardCode);
+  const [cardInput, setCardInput] = useState(props.cardCode);
 
   const changeCard = (event: any) => {
     const newCardCode = event.target.value;
@@ -23,7 +24,9 @@ export const Card = (props: {
 
     if (IsPlayingCard(newCardCode)) {
       
-      setCard(new PokerCard(newCardCode))
+      setCard(newCardCode)
+
+      props.setCard(props.handIndex, props.cardIndex, newCardCode);
     }
     
 
@@ -46,7 +49,7 @@ export const Card = (props: {
   
   return (
     <div className="playing-card">
-      <img alt={CardCodeFromCard(card)} className="z-depth-2" src={ CardCodeToImage(CardCodeFromCard(card)) } />
+      <img alt={card} className="z-depth-2" src={ CardCodeToImage(card) } />
       
       <div className="input-field">
         <input type="text" className="validate"

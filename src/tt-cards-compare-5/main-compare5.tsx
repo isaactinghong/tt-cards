@@ -2,7 +2,7 @@
 import React from 'react';
 import PlayingDeck, { CardCodeToImage, CardCodeFromCard } from '../tt-cards-game/playing-cards';
 import { produce } from 'immer';
-import { CompareHand } from './compare-round';
+import { CompareHand } from './compare5-round';
 
 export interface CompareRound {
   deck: any;
@@ -18,19 +18,27 @@ interface MainComparesState {
   numOfCardsDrawn: number;
 }
 
-class Props {
-  
+interface Props {
+  numOfCompares: number;
+  numOfHandsToCompares: number;
+  numOfCardsDrawn: number;
 }
 
-class MainCompares extends React.Component<Props, MainComparesState> {
+class MainCompare5 extends React.Component<Props, MainComparesState> {
   
-  constructor(props: any) {
+  static Props: {
+    numOfCompares: number;
+    numOfHandsToCompares: number;
+    numOfCardsDrawn: number;
+  }
+
+  constructor(props: Props) {
     super(props);
     // Don't call this.setState() here!
     this.state = {
-      numOfCompares: 3,
-      numOfHandsToCompares: 2,
-      numOfCardsDrawn: 5,
+      numOfCompares: props.numOfCompares,
+      numOfHandsToCompares: props.numOfHandsToCompares,
+      numOfCardsDrawn: props.numOfCardsDrawn,
       compares: [],
     };
 
@@ -132,4 +140,4 @@ class MainCompares extends React.Component<Props, MainComparesState> {
 
 }
 
-export default MainCompares;
+export default MainCompare5;

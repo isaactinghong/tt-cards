@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CompareRound } from "./main-compares";
+import { CompareRound } from "./main-compare5";
 import { Card } from "./card";
 import produce from "immer";
 const Hand = require('pokersolver').Hand;
@@ -10,8 +10,6 @@ function hasDuplicates(array: any[]) {
 
 export const CompareHand = (props: { compareRound: CompareRound}) => {
 
-  // const [compareRound, setCompareRound] = useState(props.compareRound);
-  // const [deck, setDeck] = useState(props.compareRound.deck);
   const [hands, setHands] = useState(props.compareRound.hands);
 
   const solveHands = (hands: any[]) => {
@@ -19,7 +17,6 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
     let playerIndex = 1;
 
     hands.map((hand: any) => {
-      // console.log(hand);
       const solvedHand = Hand.solve(hand);
 
       solvedHand.playerId = playerIndex;
@@ -30,8 +27,6 @@ export const CompareHand = (props: { compareRound: CompareRound}) => {
   }
 
   const determineWinner = (solvedHands: any[]) => {
-    
-    // console.log('solvedHands', solvedHands);
 
     const winnerHands = Hand.winners(solvedHands);
     const winnerPlayerIds = winnerHands.map((hand: any) => hand.playerId);

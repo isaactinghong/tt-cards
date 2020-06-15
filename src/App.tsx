@@ -1,14 +1,9 @@
 import React from 'react';
 import './App.css';
-import MainCompares from './tt-cards-compare/main-compares'
-
+import MainRoundsComponent from './tt-cards-round/main-rounds';
 
 function App() {
   
-
-  // const deck = new decks.StandardDeck();
-  
-
   return (
     <div className="App">
       <nav>
@@ -21,8 +16,17 @@ function App() {
           </ul> */}
         </div>
       </nav>
-      {/* <TTTBoard /> */}
-      <MainCompares />
+      {/* <TTTBoard /> */}      
+      <MainRoundsComponent
+        numOfRounds={2}
+        numOfPlayersInRound={2}
+        // numOfCardsDrawn={4}
+         />
+      {/* <MainCompare5
+        numOfCompares={1}
+        numOfHandsToCompares={2}
+        numOfCardsDrawn={4}
+         /> */}
     </div>
   );
 }

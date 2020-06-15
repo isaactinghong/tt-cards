@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { CardCodeFromCard, CardCodeToImage, IsPlayingCard } from "../tt-cards-game/playing-cards";
-import { CompareRound } from "./main-compares";
+import { GameRoundComponent } from "./game-round";
 const PokerCard = require('pokersolver').Card;
 
 
-export const Card = (props: {
+export const CardComponent = (props: {
   // compareRound: CompareRound,
   handIndex: number,
   cardIndex: number,
@@ -28,27 +28,11 @@ export const Card = (props: {
 
       props.setCard(props.handIndex, props.cardIndex, newCardCode);
     }
-    
-
-    // this.setState(produce(this.state, state => {
-    //   const compareIndex = this.state.compares.findIndex(compare => compare === compareRound);
-    //   state.compares.splice(compareIndex, 1);
-
-    //   console.log(solvedHand.cardPool);
-
-    //   // change the card in compareRound
-    //   // compareRound.hands
-
-    //   state.compares = [
-    //     ...state.compares,
-    //     compareRound
-    //   ]
-    // }))
   }
 
   
   return (
-    <div className="playing-card">
+    <div className="playing-card col s2">
       <img alt={card} className="z-depth-2" src={ CardCodeToImage(card) } />
       
       <div className="input-field">

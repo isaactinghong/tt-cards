@@ -8,20 +8,21 @@ export const CardComponent = (props: {
   // compareRound: CompareRound,
   handIndex: number,
   cardIndex: number,
-  cardCode: any,
+  cardCode: string,
   setCard: any,
 }) => {
 
   // const [compareRound, setCompareRound] = useState(props.compareRound);
   const [card, setCard] = useState(props.cardCode);
-  const [cardInput, setCardInput] = useState(props.cardCode);
+  const [cardInput, setCardInput] = useState(props.cardCode.toUpperCase());
 
   const changeCard = (event: any) => {
-    const newCardCode = event.target.value;
-    console.log('newCardCode:', newCardCode);
+    const newCardCodeInput: string = event.target.value;
+    console.log('newCardCodeInput:', newCardCodeInput);
     
-    setCardInput(newCardCode);
+    setCardInput(newCardCodeInput);
 
+    const newCardCode = newCardCodeInput.charAt(0).toUpperCase() + newCardCodeInput.charAt(1).toLowerCase();
     if (IsPlayingCard(newCardCode)) {
       
       setCard(newCardCode)

@@ -123,7 +123,9 @@ export const GameRoundComponent = (props: {
           { players.map((player: Player, playerIndex: number) => {
               return (
                 <div className="col s6" key={playerIndex}>
-                  
+                  <div className="row">
+                    <div className="player-title">Player {player.playerIndex + 1}</div>
+                  </div>
                   <div className="row top3">
                     <div className="row cards">
                       {player.top3Cards.map((cardCode: string, cardIndex: number) => {
@@ -175,9 +177,6 @@ export const GameRoundComponent = (props: {
                     <div className="row desc">
                         { player.bottom5Hand }
                     </div>
-                  </div>
-                  <div className="row">
-                    <div className="col s12 player-title">Player {player.playerIndex + 1}</div>
                   </div>
                 </div>
               );

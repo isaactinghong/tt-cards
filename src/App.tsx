@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import MainRoundsComponent from './tt-cards-round/main-rounds';
+import MainRoundsDndComponent from './tt-cards-round-dnd/main-rounds';
 
 function App() {
   
@@ -17,7 +17,7 @@ function App() {
         </div>
       </nav>
       {/* <TTTBoard /> */}      
-      <MainRoundsComponent
+      <MainRoundsDndComponent
         numOfRounds={2}
         numOfPlayersInRound={2}
         // numOfCardsDrawn={4}

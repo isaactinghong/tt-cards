@@ -1,68 +1,159 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## [十三張 Chinese poker](https://zh.wikipedia.org/wiki/%E5%8D%81%E4%B8%89%E5%BC%B5)
 
-In the project directory, you can run:
 
-### `npm start`
+### TODO
+- [x] diplay cards in 3, 5, 5 format
+- [ ] swap cards with "react-beautiful-dnd"
+        https://github.com/atlassian/react-beautiful-dnd
+        multi hori list: https://react-beautiful-dnd.netlify.app/?path=/story/multiple-horizontal-lists--stress-test
+        multi drag: https://react-beautiful-dnd.netlify.app/?path=/story/multi-drag--pattern
+        swap: https://github.com/atlassian/react-beautiful-dnd/issues/911
+        | or this? react-flip-move
+          https://github.com/joshwcomeau/react-flip-move
+        | or this? framer motion. WOW!!!
+          https://www.framer.com/motion/
+- [ ] compare two players
+        compareTop
+        compareMiddle/Bottom
+        computeDuelScore(player, againstPlayer)
+- ...
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Data Structure
+Player
+  Name
+  Score
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+GameTable
+  GameRound[]
+  Player[]
 
-### `npm test`
+GameRound
+  GameStage
+    StageName
+    RemainingSeconds
+  Players: { P1/P2/P3/P4:  
+   { 
+      RoundScore?: int,
+      DealtCards: Card[], 
+      SpecialHand?: SpecialHand
+      Top3?: { 
+        Cards: Cards[],
+        Hand: Hand,
+       }
+      Middle5?:{ 
+        Cards: Cards[],
+        Hand: Hand,
+       }
+      Bottom5?:{ 
+        Cards: Cards[],
+        Hand: Hand,
+       }
+     }
+   },
+   Duels {
+     P1P2/P1P3/P1P4/P2P3/P2P4/P3P4: {
+       Top3?: int
+       Middle5?: int
+       Bottom5?: int
+       SpecialHand?: int
+       DuelTotal: int
+     }
+   }
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### [boardgame.io](https://boardgame.io/)
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Lobby
+ Create Table
+	Table Name
+	Table Settings
+		PlayCard duration
+			 Default 60 seconds
+		Allow Spectators?
+		Private?
+	Max 30 tables
+ List Tables
+	 Table Name
+	 Players (2/4)
+	 Spectators?
+playerSettings: {
+	acceptSpectator: bool;
+}
+game: {
+	setup: 
+		table: {
+		}
+		secret: {
+			currentRound: {
+				same as below
+			}
+		}
+		players: {
+			'0': {
+				this can be the dealer? bot controlled in server?
+			},
+			'1': {
+			},
+		}
+	table: 
+		roundNum: int // current round number
+		rounds: [{
+			player1/2/3/4: {
+				dealtCards: Card[],
+				confirmedHand: Card[],
+				reportSpecial: bool,
+				ownGoal: bool,
+				reportOwnGoal: [{
+					targetPlayerId: string,
+					correct: bool,
+				}]
+				beforeScore: int,
+				afterScore: int,
+			}
+		}]
+		allPlayers: [{
+			player1/2/3/4: {
+				acceptSpectator: bool,
+				currentScore: int,
+			}
+		}]
+	phase:
+		GatheringPlayers
+			render: WaitingScreen
+			endIf: 4 players joined
+			next: DrawCards
+			moves:
+				sitDown
+				standUp
+				leaveTable
+				acceptSpectator
+				spectate(playerId)
+				
+		DrawCards
+			render: DrawCardsScreen
+			next: PlayCards
+			system:
+				Shuffle cards and deal 13 cards to each player
+		  
+		PlayCards
+			render: PickCardsScreen
+			endif: all players confirm hands, or time runs out (e.g. 1 min)
+			next: ShowRoundResult
+			moves:
+				openCard
+				swapCard
+				reportSpecial
+				confirmHand
+		  
+		ShowRoundResult
+			render: RoundResultScreen
+			endif: all players click ready to continue or time runs out (e.g. 1 min)
+			system: 
+				compare all the played hands and give verdict. how?
+				...
+				calculate the score of the round for each player. how?
+			moves:
+				reportOwnGoal
+				readyToContinue
+			next: DrawCards

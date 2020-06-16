@@ -85,7 +85,7 @@ export const GameRoundComponent = (props: {
     
     const reducer = (acc: any, player: Player) => { acc.push(player.playedCards); return acc; };
     const allCards = [].concat(...players.reduce(reducer, []));
-    console.log('allCards:', allCards);
+    // console.log('allCards:', allCards);
     return hasDuplicates(allCards)
   }
 
@@ -118,14 +118,14 @@ export const GameRoundComponent = (props: {
 
   // determineWinner(solvedHands);
     
-  const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+  const getItemStyle = (snapshot: any, draggableStyle: any) => ({
     // some basic styles to make the items look a bit nicer
     userSelect: 'none',
     padding: 2,
     margin: `0 2px 0 0`,
 
     // change background colour if dragging
-    background: isDragging ? 'transparent' : 'transparent',
+    background: snapshot.isDragging ? 'transparent' : 'transparent',
 
     // styles we need to apply on draggables
     ...draggableStyle,
@@ -182,10 +182,25 @@ export const GameRoundComponent = (props: {
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
-    // dropped outside the list
-    if (!destination) {
-        return;
-    }
+    // // dropped outside the list
+    // if (!destination) {
+    //     return;
+    // }
+    
+    // if (result.combine) {
+    //   console.log('combine', source);
+    //   console.log('result', result);
+
+    //   const items = reorder(
+    //     source.droppableId,
+    //     source.index,
+    //     destination.index
+    //   );
+
+    //   return;
+    // }
+    if (source == null || destination == null)
+      return;
 
     if (source.droppableId === destination.droppableId) {
         const items = reorder(
@@ -194,6 +209,11 @@ export const GameRoundComponent = (props: {
             destination.index
         );
     } else {
+        const items = reorder(
+            source.droppableId,
+            source.index,
+            destination.index
+        );
         // const result = move(
         //     this.getCardList(source.droppableId),
         //     this.getCardList(destination.droppableId),
@@ -229,8 +249,12 @@ export const GameRoundComponent = (props: {
                     </div>
                     { player.racks.map((rack, rackIndex: number) => {
                       return (
-                        <div className="row draggable-rack">
-                          <Droppable droppableId={`${playerIndex}-${rack.type}`} direction="horizontal">
+                        <div className="row draggable-rack" key={rackIndex}>
+                          <Droppable 
+                            droppableId={`${playerIndex}-${rack.type}`} 
+                            direction="horizontal"
+                            isCombineEnabled={true}
+                            >
                             {(provided, snapshot) => (
                               <div
                                 ref={provided.innerRef}
@@ -249,7 +273,7 @@ export const GameRoundComponent = (props: {
                                         {...provided.dragHandleProps}
                                         className="col s2"
                                         style={getItemStyle(
-                                          snapshot.isDragging,
+                                          snapshot,
                                           provided.draggableProps.style
                                         )}
                                       >

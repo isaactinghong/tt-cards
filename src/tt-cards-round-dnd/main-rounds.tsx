@@ -127,7 +127,7 @@ class MainRoundsDndComponent extends React.Component<Props, State> {
               Array(this.state.numOfRounds).fill(null).map((round: any, roundIndex: number) => {
                 
                 return (
-                  <GameRoundComponent roundIndex={roundIndex} numOfPlayersInRound={this.props.numOfPlayersInRound} />
+                  <GameRoundComponent key={roundIndex} roundIndex={roundIndex} numOfPlayersInRound={this.props.numOfPlayersInRound} />
                 );
               })
             }

@@ -179,11 +179,6 @@ export const GameRoundComponent = (props: {
     return result;
   };
 
-  // const getCardList = (droppableId: string) => {
-  //   // TODO: extract playerIndex and rack (top3/middle5/bottom5) from droppable id
-  //   console.log(droppableId);
-  // }
-
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
@@ -278,59 +273,6 @@ export const GameRoundComponent = (props: {
                       );
                       })
                     }
-                    {/* { [
-                        {cards: player.top3Cards, type: RACK_TYPE.TOP3},
-                        {cards: player.middle5Cards, type: RACK_TYPE.MIDDLE5},
-                        {cards: player.bottom5Cards, type: RACK_TYPE.BOTTOM5},
-                      ].map((rack: {
-                        cards: string[], 
-                        type: RACK_TYPE
-                      }, rackIndex: number) => {
-                      return (
-                        <div className="row draggable-rack">
-                          <Droppable droppableId={`${playerIndex}-${rack.type}`} direction="horizontal">
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                style={getCardListStyle(snapshot.isDraggingOver)}
-                                {...provided.droppableProps}
-                              >
-                                {rack.cards.map((cardCode: string, cardIndex: number) => (
-                                  <Draggable 
-                                    key={`${props.roundIndex}-${cardCode}`} 
-                                    draggableId={`${props.roundIndex}-${cardCode}`} 
-                                    index={ RackBaseNumber(rack.type) + cardIndex }>
-                                    {(provided, snapshot) => (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        className="col s2"
-                                        style={getItemStyle(
-                                          snapshot.isDragging,
-                                          provided.draggableProps.style
-                                        )}
-                                      >
-                                        
-                                        <CardComponent 
-                                          cardId={`${playerIndex}-${cardCode}`}
-                                          handIndex={playerIndex}
-                                          cardIndex={cardIndex}
-                                          cardCode={cardCode} 
-                                          setCard={setCard}
-                                        />
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                ))}
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
-                        </div>
-                      );
-                      })
-                    } */}
                   </div>
                 );
               }) }

@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { CardComponent } from "./card";
 import produce from "immer";
-import { Player } from "./player";
+import { Player, RACK_TYPE } from "./player";
 import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const Hand = require('pokersolver').Hand;
+
+const RackBaseNumber = (rackType: RACK_TYPE) => { 
+  switch (rackType) {
+    case RACK_TYPE.MIDDLE5: 
+      return 3;
+    case RACK_TYPE.BOTTOM5: 
+      return 8;
+    default: 
+      return 0;
+  }
+}
 
 function hasDuplicates(array: any[]) {
   return (new Set(array)).size !== array.length;
@@ -89,9 +100,7 @@ export const GameRoundComponent = (props: {
     // console.log('setCard:', handIndex, cardIndex, cardCode);
 
     const newPlayers = produce(players, (players: Player[]) => {
-      if (players[playerIndex].playedCards !== undefined) {
-        players[playerIndex].playedCards[cardIndex] = cardCode;
-      }
+      players[playerIndex].playedCards[cardIndex] = cardCode;
     });
 
     // set the card to hands
@@ -130,12 +139,27 @@ export const GameRoundComponent = (props: {
   });
 
   // a little function to help us with reordering the result
-  const reorder = (list:string[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
+  const reorder = (droppableId: string, startIndex: number, endIndex: number) => {
 
-    return result;
+    console.log('droppableId startIndex endIndex:', droppableId, startIndex, endIndex);
+
+    // TODO: extract playerIndex and rack (top3/middle5/bottom5) from droppable id
+    const [playerIndexStr, rackType] = droppableId.split('-');
+    const playerIndex: number = +playerIndexStr;
+    console.log('playerIndex rackType:', playerIndex, rackType);
+
+    const newPlayers = produce(players, (players: Player[]) => {
+      // players[playerIndex].playedCards[startIndex] = cardCode;
+
+      // const result = players[playerIndex].playedCards;
+      const [removed] = players[playerIndex].playedCards.splice(startIndex, 1);
+      players[playerIndex].playedCards.splice(endIndex, 0, removed);
+    });
+
+    console.log(newPlayers);
+    
+    // set the card to hands
+    setPlayers(newPlayers)
   };
 
   /**
@@ -155,10 +179,10 @@ export const GameRoundComponent = (props: {
     return result;
   };
 
-  const getCardList = (droppableId: string) => {
-    // TODO: extract playerIndex and rack (top3/middle5/bottom5) from droppable id
-    console.log(droppableId);
-  }
+  // const getCardList = (droppableId: string) => {
+  //   // TODO: extract playerIndex and rack (top3/middle5/bottom5) from droppable id
+  //   console.log(droppableId);
+  // }
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -169,19 +193,11 @@ export const GameRoundComponent = (props: {
     }
 
     if (source.droppableId === destination.droppableId) {
-        // const items = reorder(
-        //     this.getCardList(source.droppableId),
-        //     source.index,
-        //     destination.index
-        // );
-
-        // let state = { items };
-
-        // if (source.droppableId === 'droppable2') {
-        //     state = { selected: items };
-        // }
-
-        // this.setState(state);
+        const items = reorder(
+            source.droppableId,
+            source.index,
+            destination.index
+        );
     } else {
         // const result = move(
         //     this.getCardList(source.droppableId),
@@ -216,14 +232,7 @@ export const GameRoundComponent = (props: {
                     <div className="row">
                       <div className="player-title">Player {player.playerIndex + 1}</div>
                     </div>
-                    { [
-                        {cards: player.top3Cards, type: 'top3'},
-                        {cards: player.middle5Cards, type: 'middle5'},
-                        {cards: player.bottom5Cards, type: 'bottom5'},
-                      ].map((rack: {
-                        cards: string[], 
-                        type: string
-                      }, rackIndex: number) => {
+                    { player.racks.map((rack, rackIndex: number) => {
                       return (
                         <div className="row draggable-rack">
                           <Droppable droppableId={`${playerIndex}-${rack.type}`} direction="horizontal">
@@ -233,11 +242,11 @@ export const GameRoundComponent = (props: {
                                 style={getCardListStyle(snapshot.isDraggingOver)}
                                 {...provided.droppableProps}
                               >
-                                {rack.cards.map((cardCode: string, cardIndex: number) => (
+                                {rack.cards().map((cardCode: string, cardIndex: number) => (
                                   <Draggable 
                                     key={`${props.roundIndex}-${cardCode}`} 
                                     draggableId={`${props.roundIndex}-${cardCode}`} 
-                                    index={cardIndex}>
+                                    index={ RackBaseNumber(rack.type) + cardIndex }>
                                     {(provided, snapshot) => (
                                       <div
                                         ref={provided.innerRef}
@@ -269,6 +278,59 @@ export const GameRoundComponent = (props: {
                       );
                       })
                     }
+                    {/* { [
+                        {cards: player.top3Cards, type: RACK_TYPE.TOP3},
+                        {cards: player.middle5Cards, type: RACK_TYPE.MIDDLE5},
+                        {cards: player.bottom5Cards, type: RACK_TYPE.BOTTOM5},
+                      ].map((rack: {
+                        cards: string[], 
+                        type: RACK_TYPE
+                      }, rackIndex: number) => {
+                      return (
+                        <div className="row draggable-rack">
+                          <Droppable droppableId={`${playerIndex}-${rack.type}`} direction="horizontal">
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                style={getCardListStyle(snapshot.isDraggingOver)}
+                                {...provided.droppableProps}
+                              >
+                                {rack.cards.map((cardCode: string, cardIndex: number) => (
+                                  <Draggable 
+                                    key={`${props.roundIndex}-${cardCode}`} 
+                                    draggableId={`${props.roundIndex}-${cardCode}`} 
+                                    index={ RackBaseNumber(rack.type) + cardIndex }>
+                                    {(provided, snapshot) => (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className="col s2"
+                                        style={getItemStyle(
+                                          snapshot.isDragging,
+                                          provided.draggableProps.style
+                                        )}
+                                      >
+                                        
+                                        <CardComponent 
+                                          cardId={`${playerIndex}-${cardCode}`}
+                                          handIndex={playerIndex}
+                                          cardIndex={cardIndex}
+                                          cardCode={cardCode} 
+                                          setCard={setCard}
+                                        />
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </div>
+                      );
+                      })
+                    } */}
                   </div>
                 );
               }) }

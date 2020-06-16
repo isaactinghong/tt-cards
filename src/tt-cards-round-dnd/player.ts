@@ -1,3 +1,10 @@
+
+export enum RACK_TYPE {
+  TOP3 = 'TOP3',
+  MIDDLE5='MIDDLE3',
+  BOTTOM5='BOTTOM5',
+}
+
 export class Player {
   playerIndex: number = -1;
   roundScore?: number;
@@ -17,5 +24,15 @@ export class Player {
   }
   get bottom5Cards() {
     return this.playedCards?.slice(8);
+  }
+  get racks(): {
+    cards: any, 
+    type: RACK_TYPE
+  }[] {
+    return [
+      {cards: () => this.top3Cards, type: RACK_TYPE.TOP3},
+      {cards: () => this.middle5Cards, type: RACK_TYPE.MIDDLE5},
+      {cards: () => this.bottom5Cards, type: RACK_TYPE.BOTTOM5},
+    ]
   }
 }

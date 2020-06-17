@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { CardCodeFromCard, CardCodeToImage, IsPlayingCard } from "../tt-cards-game/playing-cards";
-import { GameRoundComponent } from "./game-round";
-const PokerCard = require('pokersolver').Card;
+import { CardCodeToImage, IsPlayingCard } from "../tt-cards-game/playing-cards";
 
 
 export const CardComponent = (props: {
@@ -15,7 +13,7 @@ export const CardComponent = (props: {
 }) => {
 
   // const [compareRound, setCompareRound] = useState(props.compareRound);
-  const [cardId, setCardId] = useState(props.cardId);
+  // const [cardId] = useState(props.cardId);
   const [card, setCard] = useState(props.cardCode);
   const [cardInput, setCardInput] = useState(props.cardCode.toUpperCase());
 

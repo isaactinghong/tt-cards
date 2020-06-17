@@ -17,3 +17,10 @@ header {
 .player-title {
   font-size: 1.2em;
 }
+
+.playing-card {
+  > .input-field {
+    margin-top:0em;
+    height:2em;
+  }
+}

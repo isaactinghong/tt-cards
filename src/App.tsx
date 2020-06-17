@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import MainRoundsDndComponent from './tt-cards-round-dnd/main-rounds';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div className="App">
       <nav>
         <div className="nav-wrapper">
-          <a href="#" className="brand-logo">十三張 Chinese Poker Thirteen Cards</a>
+          <a href="#tt-cards" className="brand-logo">十三張 Chinese Poker Thirteen Cards</a>
           {/* <ul id="nav-mobile" className="right hide-on-med-and-down">
             <li><a href="sass.html">Sass</a></li>
             <li><a href="badges.html">Components</a></li>

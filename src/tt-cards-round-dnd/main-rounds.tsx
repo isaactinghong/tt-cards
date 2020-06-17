@@ -1,10 +1,6 @@
 
 import React from 'react';
-import PlayingDeck, { CardCodeToImage, CardCodeFromCard } from '../tt-cards-game/playing-cards';
-import { produce } from 'immer';
-import { GameRoundComponent, RoundState } from './game-round';
-import { Player } from './player';
-import { plainToClass } from 'class-transformer';
+import { GameRoundComponent } from './game-round';
 
 interface State {
   // rounds: RoundState[];
@@ -38,44 +34,6 @@ class MainRoundsDndComponent extends React.Component<Props, State> {
     };
     
   }
-
-  // refreshRounds(numOfRounds: number = this.state.numOfRounds) {
-    
-  //   const roundsArray: any[] = [];
-
-  //   console.log('numOfRounds', numOfRounds)
-
-  //   for (let i = 0; i < numOfRounds; i++) {
-
-  //     let deck = PlayingDeck();
-  //     const players = [];
-
-  //     for (let j = 0; j < this.state.numOfPlayersInRound; j++) {
-
-  //       const top3Cards = deck.draw(3);
-  //       const middle5Cards = deck.draw(5);
-  //       const bottom5Cards = deck.draw(5);
-
-  //       const dealtCards = top3Cards.concat(middle5Cards, bottom5Cards);
-
-  //       const player = plainToClass(Player, {
-  //         playerIndex: j,
-  //         dealtCards: dealtCards,
-  //         playedCards: Object.assign([], dealtCards),
-  //       });
-
-  //       players.push(player);
-  //     }
-
-  //     roundsArray.push({
-  //       deck,
-  //       players: players,
-  //     });
-  //   }
-  //   console.log('roundsArray', roundsArray)
-
-  //   return roundsArray;
-  // }
   
   updateFormData(event: any) {
     console.log(event.target.name, event.target.value);
@@ -96,10 +54,7 @@ class MainRoundsDndComponent extends React.Component<Props, State> {
     });
   }
 
-
   render() {
-      
-    
     return (
       <div>
         <form action="#" className="form-parameters">

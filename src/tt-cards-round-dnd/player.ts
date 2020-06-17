@@ -26,13 +26,14 @@ export class Player {
     return this.playedCards?.slice(8);
   }
   get racks(): {
-    cards: any, 
+    cards: () => string[], 
+    hand: () => any;
     type: RACK_TYPE
   }[] {
     return [
-      {cards: () => this.top3Cards, type: RACK_TYPE.TOP3},
-      {cards: () => this.middle5Cards, type: RACK_TYPE.MIDDLE5},
-      {cards: () => this.bottom5Cards, type: RACK_TYPE.BOTTOM5},
+      {cards: () => this.top3Cards, hand: () => this.top3Hand, type: RACK_TYPE.TOP3},
+      {cards: () => this.middle5Cards, hand: () => this.middle5Hand, type: RACK_TYPE.MIDDLE5},
+      {cards: () => this.bottom5Cards, hand: () => this.bottom5Hand, type: RACK_TYPE.BOTTOM5},
     ]
   }
 }

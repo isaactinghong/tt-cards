@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CardComponent } from "./card";
 import produce from "immer";
 import { Player, RACK_TYPE } from "./player";
@@ -6,32 +6,6 @@ import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const Hand = require('pokersolver').Hand;
-
-const RackBaseIndex = (rackType: RACK_TYPE) => { 
-  switch (rackType) {
-    case RACK_TYPE.MIDDLE5: 
-      return 3;
-    case RACK_TYPE.BOTTOM5: 
-      return 8;
-    default: 
-      return 0;
-  }
-}
-
-const RackLastIndex = (rackType: RACK_TYPE) => { 
-  switch (rackType) {
-    case RACK_TYPE.MIDDLE5: 
-      return 7;
-    case RACK_TYPE.BOTTOM5: 
-      return 12;
-    default: 
-      return 2;
-  }
-}
-
-function hasDuplicates(array: any[]) {
-  return (new Set(array)).size !== array.length;
-}
 
 export interface RoundState {
   deck: any;
@@ -66,6 +40,19 @@ export const GameRoundComponent = (props: {
   }
 
   const [players, setPlayers] = useState(initialPlayers);
+
+  const solveHands = (iPlayers: Player[]) => {
+
+    return produce(iPlayers, players => {
+
+      players.map((player: Player) => {
+        player.top3Hand = Hand.solve(player.top3Cards);
+        player.middle5Hand = Hand.solve(player.middle5Cards);
+        player.bottom5Hand = Hand.solve(player.bottom5Cards);
+        return true;
+      });
+    });
+  }
 
   // const solveHands = (players: Player[]) => {
   //   const solvedHands: any[] = [];
@@ -110,9 +97,11 @@ export const GameRoundComponent = (props: {
     // console.log('hands:',hands);
     // console.log('setCard:', handIndex, cardIndex, cardCode);
 
-    const newPlayers = produce(players, (players: Player[]) => {
+    let newPlayers = produce(players, (players: Player[]) => {
       players[playerIndex].playedCards[cardIndex] = cardCode;
     });
+
+    newPlayers = solveHands(newPlayers);
 
     // set the card to hands
     setPlayers(newPlayers)
@@ -129,25 +118,6 @@ export const GameRoundComponent = (props: {
 
   // determineWinner(solvedHands);
     
-  const getItemStyle = (snapshot: any, draggableStyle: any) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: 2,
-    margin: `0 2px 0 0`,
-
-    // change background colour if dragging
-    background: snapshot.isDragging ? 'transparent' : 'transparent',
-
-    // styles we need to apply on draggables
-    ...draggableStyle,
-  });
-
-  const getCardListStyle = (isDraggingOver: boolean) => ({
-    background: isDraggingOver ? 'transparent' : 'transparent',
-    display: 'flex',
-    padding: 2,
-    overflow: 'auto',
-  });
 
   // a little function to help us with reordering the result
   const reorder = (source: any, destination: any) => {
@@ -171,20 +141,20 @@ export const GameRoundComponent = (props: {
     const playerIndex: number = +playerIndexStr;
     // console.log('playerIndex sourceRackType destinationRackType:', playerIndex, sourceRackType, destinationRackType);
 
-    const newPlayers = produce(players, (players: Player[]) => {
+    return produce(players, (_players: Player[]) => {
       // just swap if both in same rack
       if (sourceRackType === destinationRackType) {
-        const [removed] = players[playerIndex].playedCards.splice(sourceIndex, 1);
-        players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+        const [removed] = _players[playerIndex].playedCards.splice(sourceIndex, 1);
+        _players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
       }
       else {
-        const [removed] = players[playerIndex].playedCards.splice(sourceIndex, 1);
+        const [removed] = _players[playerIndex].playedCards.splice(sourceIndex, 1);
 
         if (destinationIndex > sourceIndex) {
           destinationIndex--;
         }
 
-        players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+        _players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
 
         // put destinationRackType's last extra to sourceRackType's last
         let destinationRackLastIndex = RackLastIndex(destinationRackType);
@@ -194,15 +164,10 @@ export const GameRoundComponent = (props: {
           destinationRackLastIndex++;
         }
 
-        const [removed2] = players[playerIndex].playedCards.splice(destinationRackLastIndex, 1);
-        players[playerIndex].playedCards.splice(sourceRackTypeLastIndex, 0, removed2);
+        const [removed2] = _players[playerIndex].playedCards.splice(destinationRackLastIndex, 1);
+        _players[playerIndex].playedCards.splice(sourceRackTypeLastIndex, 0, removed2);
       }
     });
-
-    // console.log(newPlayers);
-    
-    // set the card to hands
-    setPlayers(newPlayers)
   };
 
   const onDragEnd = (result: any) => {
@@ -211,12 +176,38 @@ export const GameRoundComponent = (props: {
     if (source == null || destination == null)
       return;
 
-    const items = reorder(
+    let newPlayers = reorder(
       source,
       destination
     );
+
+    newPlayers = solveHands(newPlayers);
+
+    console.log(newPlayers);
+    
+    // set the card to hands
+    setPlayers(newPlayers);
   }
 
+  const getItemStyle = (snapshot: any, draggableStyle: any) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: 'none',
+    padding: 2,
+    margin: `0 2px 0 0`,
+
+    // change background colour if dragging
+    background: snapshot.isDragging ? 'transparent' : 'transparent',
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+  });
+
+  const getCardListStyle = (isDraggingOver: boolean) => ({
+    background: isDraggingOver ? 'transparent' : 'transparent',
+    display: 'flex',
+    padding: 2,
+    overflow: 'auto',
+  });
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -238,50 +229,57 @@ export const GameRoundComponent = (props: {
                     </div>
                     { player.racks.map((rack, rackIndex: number) => {
                       return (
-                        <div className="row draggable-rack" key={rackIndex}>
-                          <Droppable 
-                            droppableId={`${playerIndex}-${rack.type}`} 
-                            direction="horizontal"
-                            // isCombineEnabled={true}
-                            >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                style={getCardListStyle(snapshot.isDraggingOver)}
-                                {...provided.droppableProps}
+                        <div key={rackIndex}>
+                          <div className="row rack-title">
+                            <div className="col s12">
+                              Hand: { rack.hand()?.descr }
+                            </div>
+                          </div>
+                          <div className="row draggable-rack">
+                            <Droppable 
+                              droppableId={`${playerIndex}-${rack.type}`} 
+                              direction="horizontal"
+                              // isCombineEnabled={true}
                               >
-                                {rack.cards().map((cardCode: string, cardIndex: number) => (
-                                  <Draggable 
-                                    key={`${props.roundIndex}-${cardCode}`} 
-                                    draggableId={`${props.roundIndex}-${cardCode}`} 
-                                    index={ RackBaseIndex(rack.type) + cardIndex }>
-                                    {(provided, snapshot) => (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        className="col s2"
-                                        style={getItemStyle(
-                                          snapshot,
-                                          provided.draggableProps.style
-                                        )}
-                                      >
-                                        
-                                        <CardComponent 
-                                          cardId={`${playerIndex}-${cardCode}`}
-                                          handIndex={playerIndex}
-                                          cardIndex={cardIndex}
-                                          cardCode={cardCode} 
-                                          setCard={setCard}
-                                        />
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                ))}
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  style={getCardListStyle(snapshot.isDraggingOver)}
+                                  {...provided.droppableProps}
+                                >
+                                  {rack.cards().map((cardCode: string, cardIndex: number) => (
+                                    <Draggable 
+                                      key={`${props.roundIndex}-${cardCode}`} 
+                                      draggableId={`${playerIndex}-${props.roundIndex}-${cardCode}`} 
+                                      index={ RackBaseIndex(rack.type) + cardIndex }>
+                                      {(provided, snapshot) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          className="col s2"
+                                          style={getItemStyle(
+                                            snapshot,
+                                            provided.draggableProps.style
+                                          )}
+                                        >
+                                          
+                                          <CardComponent 
+                                            cardId={`${playerIndex}-${cardCode}`}
+                                            handIndex={playerIndex}
+                                            cardIndex={cardIndex}
+                                            cardCode={cardCode} 
+                                            setCard={setCard}
+                                          />
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
                         </div>
                       );
                       })
@@ -295,4 +293,31 @@ export const GameRoundComponent = (props: {
     </DragDropContext>
   );
 
+}
+
+
+const RackBaseIndex = (rackType: RACK_TYPE) => { 
+  switch (rackType) {
+    case RACK_TYPE.MIDDLE5: 
+      return 3;
+    case RACK_TYPE.BOTTOM5: 
+      return 8;
+    default: 
+      return 0;
+  }
+}
+
+const RackLastIndex = (rackType: RACK_TYPE) => { 
+  switch (rackType) {
+    case RACK_TYPE.MIDDLE5: 
+      return 7;
+    case RACK_TYPE.BOTTOM5: 
+      return 12;
+    default: 
+      return 2;
+  }
+}
+
+function hasDuplicates(array: any[]) {
+  return (new Set(array)).size !== array.length;
 }

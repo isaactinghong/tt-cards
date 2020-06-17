@@ -12,11 +12,15 @@ This project is written in React and boardgame.io
   - or this? [react-flip-move](https://github.com/joshwcomeau/react-flip-move)
   - or this? [framer motion](https://www.framer.com/motion/). WOW!!!
 - [x] 3, 5, 5 with each rack cards attached to the left
+- [x] display hand with setCard 
+- [ ] display hand with reorder 
+- [ ] display duplicate cards' cardCode
 - [ ] compare two players
   - compareTop
   - compareMiddle/Bottom
   - computeDuelScore(player, againstPlayer)
 - [ ] ...
+- [ ] animate the last extra card to new position
 - [ ] highlight the last extra card in dragged over row
 - [ ] multi-drag cards to destination index
 

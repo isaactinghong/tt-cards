@@ -43,12 +43,12 @@ export const GameRoundComponent = (props: {
 
   const solveHands = (iPlayers: Player[]) => {
 
-    return produce(iPlayers, players => {
+    return produce(iPlayers, draftPlayers => {
 
-      players.map((player: Player) => {
-        player.top3Hand = Hand.solve(player.top3Cards);
-        player.middle5Hand = Hand.solve(player.middle5Cards);
-        player.bottom5Hand = Hand.solve(player.bottom5Cards);
+      draftPlayers.map((draftPlayer: Player) => {
+        draftPlayer.top3Hand = Hand.solve(draftPlayer.top3Cards);
+        draftPlayer.middle5Hand = Hand.solve(draftPlayer.middle5Cards);
+        draftPlayer.bottom5Hand = Hand.solve(draftPlayer.bottom5Cards);
         return true;
       });
     });
@@ -90,9 +90,9 @@ export const GameRoundComponent = (props: {
   const [hasDuplicateCard, setHasDuplicateCard] = useState(checkDuplicateCards(players));
 
   const setCard = (
-    playerIndex: number,
-    cardIndex: number, 
-    cardCode: string
+      playerIndex: number,
+      cardIndex: number, 
+      cardCode: string
     ) => {
     // console.log('hands:',hands);
     // console.log('setCard:', handIndex, cardIndex, cardCode);
@@ -104,9 +104,10 @@ export const GameRoundComponent = (props: {
     newPlayers = solveHands(newPlayers);
 
     // set the card to hands
-    setPlayers(newPlayers)
-
+    setPlayers([...newPlayers]);
+    
     setHasDuplicateCard(checkDuplicateCards(newPlayers));
+
 
     // solveHands
     // const solvedHands = solveHands(newHands);
@@ -120,7 +121,7 @@ export const GameRoundComponent = (props: {
     
 
   // a little function to help us with reordering the result
-  const reorder = (source: any, destination: any) => {
+  const reorder = (iPlayers: Player[], source: any, destination: any) => {
 
     let {
       sourceDroppableId = source.droppableId,
@@ -141,20 +142,20 @@ export const GameRoundComponent = (props: {
     const playerIndex: number = +playerIndexStr;
     // console.log('playerIndex sourceRackType destinationRackType:', playerIndex, sourceRackType, destinationRackType);
 
-    return produce(players, (_players: Player[]) => {
+    return produce(iPlayers, (draftPlayers: Player[]) => {
       // just swap if both in same rack
       if (sourceRackType === destinationRackType) {
-        const [removed] = _players[playerIndex].playedCards.splice(sourceIndex, 1);
-        _players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+        const [removed] = draftPlayers[playerIndex].playedCards.splice(sourceIndex, 1);
+        draftPlayers[playerIndex].playedCards.splice(destinationIndex, 0, removed);
       }
       else {
-        const [removed] = _players[playerIndex].playedCards.splice(sourceIndex, 1);
+        const [removed] = draftPlayers[playerIndex].playedCards.splice(sourceIndex, 1);
 
         if (destinationIndex > sourceIndex) {
           destinationIndex--;
         }
 
-        _players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+        draftPlayers[playerIndex].playedCards.splice(destinationIndex, 0, removed);
 
         // put destinationRackType's last extra to sourceRackType's last
         let destinationRackLastIndex = RackLastIndex(destinationRackType);
@@ -164,8 +165,8 @@ export const GameRoundComponent = (props: {
           destinationRackLastIndex++;
         }
 
-        const [removed2] = _players[playerIndex].playedCards.splice(destinationRackLastIndex, 1);
-        _players[playerIndex].playedCards.splice(sourceRackTypeLastIndex, 0, removed2);
+        const [removed2] = draftPlayers[playerIndex].playedCards.splice(destinationRackLastIndex, 1);
+        draftPlayers[playerIndex].playedCards.splice(sourceRackTypeLastIndex, 0, removed2);
       }
     });
   };
@@ -177,16 +178,14 @@ export const GameRoundComponent = (props: {
       return;
 
     let newPlayers = reorder(
+      players,
       source,
       destination
     );
 
     newPlayers = solveHands(newPlayers);
-
-    console.log(newPlayers);
     
-    // set the card to hands
-    setPlayers(newPlayers);
+    setPlayers([...newPlayers]);
   }
 
   const getItemStyle = (snapshot: any, draggableStyle: any) => ({

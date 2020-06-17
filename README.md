@@ -19,6 +19,7 @@ https://zh.wikipedia.org/wiki/%E5%8D%81%E4%B8%89%E5%BC%B5
   - computeDuelScore(player, againstPlayer)
 - [ ] ...
 - [ ] highlight the last extra card in dragged over row
+- [ ] multi-drag cards to destination index
 
 ### Game Data Structure
 - Player

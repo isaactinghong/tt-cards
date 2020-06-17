@@ -205,68 +205,16 @@ export const GameRoundComponent = (props: {
     setPlayers(newPlayers)
   };
 
-  /**
-   * Moves an item from one list to another list.
-   */
-  const move = (source: any, destination: any, droppableSource: any, droppableDestination: any) => {
-    const sourceClone = Array.from(source);
-    const destClone = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-    destClone.splice(droppableDestination.index, 0, removed);
-
-    const result: any = {};
-    result[droppableSource.droppableId] = sourceClone;
-    result[droppableDestination.droppableId] = destClone;
-
-    return result;
-  };
-
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
-    // // dropped outside the list
-    // if (!destination) {
-    //     return;
-    // }
-    
-    // if (result.combine) {
-    //   console.log('combine', source);
-    //   console.log('result', result);
-
-    //   const items = reorder(
-    //     source.droppableId,
-    //     source.index,
-    //     destination.index
-    //   );
-
-    //   return;
-    // }
     if (source == null || destination == null)
       return;
 
-    if (source.droppableId === destination.droppableId) {
-        const items = reorder(
-            source,
-            destination
-        );
-    } else {
-        const items = reorder(
-          source,
-          destination
-        );
-        // const result = move(
-        //     this.getCardList(source.droppableId),
-        //     this.getCardList(destination.droppableId),
-        //     source,
-        //     destination
-        // );
-
-        // this.setState({
-        //     items: result.droppable,
-        //     selected: result.droppable2
-        // });
-    }
+    const items = reorder(
+      source,
+      destination
+    );
   }
 
 

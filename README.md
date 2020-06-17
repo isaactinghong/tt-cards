@@ -6,19 +6,17 @@ https://zh.wikipedia.org/wiki/%E5%8D%81%E4%B8%89%E5%BC%B5
 
 ### TODO list
 - [x] diplay cards in 3, 5, 5 format
-- [ ] swap cards with "react-beautiful-dnd"
-        https://github.com/atlassian/react-beautiful-dnd
-        multi hori list: https://react-beautiful-dnd.netlify.app/?path=/story/multiple-horizontal-lists--stress-test
-        multi drag: https://react-beautiful-dnd.netlify.app/?path=/story/multi-drag--pattern
-        swap: https://github.com/atlassian/react-beautiful-dnd/issues/911
-        | or this? react-flip-move
-          https://github.com/joshwcomeau/react-flip-move
-        | or this? framer motion. WOW!!!
-          https://www.framer.com/motion/
+- [x] swap cards with ["react-beautiful-dnd"]( https://github.com/atlassian/react-beautiful-dnd)
+  - [multi hori list](https://react-beautiful-dnd.netlify.app/?path=/story/multiple-horizontal-lists--stress-test)
+  - [multi drag](https://react-beautiful-dnd.netlify.app/?path=/story/multi-drag--pattern)
+  - [swap](https://github.com/atlassian/react-beautiful-dnd/issues/911)
+  - or this? [react-flip-move](https://github.com/joshwcomeau/react-flip-move)
+  - or this? [framer motion](https://www.framer.com/motion/). WOW!!!
+- [ ] 3, 5, 5 with each rack cards attached to the left
 - [ ] compare two players
-        compareTop
-        compareMiddle/Bottom
-        computeDuelScore(player, againstPlayer)
+  - compareTop
+  - compareMiddle/Bottom
+  - computeDuelScore(player, againstPlayer)
 - [ ] ...
 
 ### Game Data Structure

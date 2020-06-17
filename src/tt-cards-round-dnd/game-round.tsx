@@ -39,8 +39,6 @@ export const GameRoundComponent = (props: {
     initialPlayers.push(player);
   }
 
-  const [players, setPlayers] = useState(initialPlayers);
-
   const solveHands = (iPlayers: Player[]) => {
 
     return produce(iPlayers, draftPlayers => {
@@ -53,6 +51,8 @@ export const GameRoundComponent = (props: {
       });
     });
   }
+
+  const [players, setPlayers] = useState(solveHands(initialPlayers));
 
   // const solveHands = (players: Player[]) => {
   //   const solvedHands: any[] = [];

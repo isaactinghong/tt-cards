@@ -7,12 +7,12 @@ import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const Hand = require('pokersolver').Hand;
 
-export interface RoundState {
-  deck: any;
-  players: Player[];
-  // solvedHands: any[];
-  hasDuplicateCard: boolean
-}
+// export interface RoundState {
+//   deck: any;
+//   players: Player[];
+//   // solvedHands: any[];
+//   duplicateCards: string[]
+// }
 
 export const GameRoundComponent = (props: { 
   numOfPlayersInRound: number,
@@ -79,15 +79,15 @@ export const GameRoundComponent = (props: {
   //   }
   // }
   
-  const checkDuplicateCards = (players: Player[]) => {
+  const findDuplicateCards = (players: Player[]) => {
     
     const reducer = (acc: any, player: Player) => { acc.push(player.playedCards); return acc; };
     const allCards = [].concat(...players.reduce(reducer, []));
     // console.log('allCards:', allCards);
-    return hasDuplicates(allCards)
+    return findDuplicates(allCards);
   }
 
-  const [hasDuplicateCard, setHasDuplicateCard] = useState(checkDuplicateCards(players));
+  const [duplicateCards, setDuplicateCards] = useState(findDuplicateCards(players));
 
   const setCard = (
       playerIndex: number,
@@ -95,7 +95,7 @@ export const GameRoundComponent = (props: {
       cardCode: string
     ) => {
     // console.log('hands:',hands);
-    // console.log('setCard:', handIndex, cardIndex, cardCode);
+    // console.log('setCard playerIndex, cardIndex, cardCode:', playerIndex, cardIndex, cardCode);
 
     let newPlayers = produce(players, (players: Player[]) => {
       players[playerIndex].playedCards[cardIndex] = cardCode;
@@ -106,7 +106,7 @@ export const GameRoundComponent = (props: {
     // set the card to hands
     setPlayers([...newPlayers]);
     
-    setHasDuplicateCard(checkDuplicateCards(newPlayers));
+    setDuplicateCards(findDuplicateCards(newPlayers));
 
 
     // solveHands
@@ -215,7 +215,7 @@ export const GameRoundComponent = (props: {
           <div className="row">
             <div>#{ props.roundIndex + 1 }</div>
             
-            <div className="col s12"><div className='red-text'>{ hasDuplicateCard ? '卡有重覆' : ''}</div></div>
+            <div className="col s12"><div className='red-text'>{ duplicateCards.length ? '重覆:' + duplicateCards.join(',') : ''}</div></div>
           </div>
         </div>
         <div className="col s10">
@@ -248,7 +248,7 @@ export const GameRoundComponent = (props: {
                                 >
                                   {rack.cards().map((cardCode: string, cardIndex: number) => (
                                     <Draggable 
-                                      key={`${props.roundIndex}-${cardCode}`} 
+                                      key={`${props.roundIndex}-${cardCode}-${cardIndex}`} 
                                       draggableId={`${playerIndex}-${props.roundIndex}-${cardCode}`} 
                                       index={ RackBaseIndex(rack.type) + cardIndex }>
                                       {(provided, snapshot) => (
@@ -266,7 +266,7 @@ export const GameRoundComponent = (props: {
                                           <CardComponent 
                                             cardId={`${playerIndex}-${cardCode}`}
                                             handIndex={playerIndex}
-                                            cardIndex={cardIndex}
+                                            cardIndex={RackBaseIndex(rack.type) + cardIndex}
                                             cardCode={cardCode} 
                                             setCard={setCard}
                                           />
@@ -319,4 +319,18 @@ const RackLastIndex = (rackType: RACK_TYPE) => {
 
 function hasDuplicates(array: any[]) {
   return (new Set(array)).size !== array.length;
+}
+
+const findDuplicates = (arr: any[]) => {
+  let sorted_arr = arr.slice().sort(); // You can define the comparing function here. 
+  // JS by default uses a crappy string compare.
+  // (we use slice to clone the array so the
+  // original array won't be modified)
+  let results = [];
+  for (let i = 0; i < sorted_arr.length - 1; i++) {
+    if (sorted_arr[i + 1] == sorted_arr[i]) {
+      results.push(sorted_arr[i]);
+    }
+  }
+  return results;
 }

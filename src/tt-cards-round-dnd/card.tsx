@@ -19,7 +19,7 @@ export const CardComponent = (props: {
 
   const changeCard = (event: any) => {
     const newCardCodeInput: string = event.target.value;
-    console.log('newCardCodeInput:', newCardCodeInput);
+    // console.log('newCardCodeInput:', newCardCodeInput);
     
     setCardInput(newCardCodeInput);
 

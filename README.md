@@ -14,7 +14,7 @@ This project is written in React and boardgame.io
 - [x] 3, 5, 5 with each rack cards attached to the left
 - [x] display hand with setCard 
 - [x] display hand with reorder 
-- [ ] display duplicate cards' cardCode
+- [x] display duplicate cards' cardCode
 - [ ] compare two players
   - compareTop
   - compareMiddle/Bottom

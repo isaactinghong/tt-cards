@@ -7,7 +7,7 @@ import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const Hand = require('pokersolver').Hand;
 
-const RackBaseNumber = (rackType: RACK_TYPE) => { 
+const RackBaseIndex = (rackType: RACK_TYPE) => { 
   switch (rackType) {
     case RACK_TYPE.MIDDLE5: 
       return 3;
@@ -15,6 +15,17 @@ const RackBaseNumber = (rackType: RACK_TYPE) => {
       return 8;
     default: 
       return 0;
+  }
+}
+
+const RackLastIndex = (rackType: RACK_TYPE) => { 
+  switch (rackType) {
+    case RACK_TYPE.MIDDLE5: 
+      return 7;
+    case RACK_TYPE.BOTTOM5: 
+      return 12;
+    default: 
+      return 2;
   }
 }
 
@@ -139,21 +150,53 @@ export const GameRoundComponent = (props: {
   });
 
   // a little function to help us with reordering the result
-  const reorder = (droppableId: string, startIndex: number, endIndex: number) => {
+  const reorder = (source: any, destination: any) => {
 
-    console.log('droppableId startIndex endIndex:', droppableId, startIndex, endIndex);
+    let {
+      sourceDroppableId = source.droppableId,
+      sourceIndex = source.index,
+     } = source
 
-    // TODO: extract playerIndex and rack (top3/middle5/bottom5) from droppable id
-    const [playerIndexStr, rackType] = droppableId.split('-');
+     let {
+       destinationDroppableId = destination.droppableId,
+       destinationIndex = destination.index,
+      } = destination;
+
+    console.log('sourceDroppableId sourceIndex destinationDroppableId destinationIndex:', 
+      sourceDroppableId, sourceIndex, destinationDroppableId, destinationIndex);
+
+    // extract playerIndex and rack (top3/middle5/bottom5) from droppable id
+    const [playerIndexStr, sourceRackType] = sourceDroppableId.split('-');
+    const [, destinationRackType] = destinationDroppableId.split('-');
     const playerIndex: number = +playerIndexStr;
-    console.log('playerIndex rackType:', playerIndex, rackType);
+    console.log('playerIndex sourceRackType destinationRackType:', playerIndex, sourceRackType, destinationRackType);
 
     const newPlayers = produce(players, (players: Player[]) => {
-      // players[playerIndex].playedCards[startIndex] = cardCode;
+      // just swap if both in same rack
+      if (sourceRackType === destinationRackType) {
+        const [removed] = players[playerIndex].playedCards.splice(sourceIndex, 1);
+        players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+      }
+      else {
+        const [removed] = players[playerIndex].playedCards.splice(sourceIndex, 1);
 
-      // const result = players[playerIndex].playedCards;
-      const [removed] = players[playerIndex].playedCards.splice(startIndex, 1);
-      players[playerIndex].playedCards.splice(endIndex, 0, removed);
+        if (destinationIndex > sourceIndex) {
+          destinationIndex--;
+        }
+
+        players[playerIndex].playedCards.splice(destinationIndex, 0, removed);
+
+        // put destinationRackType's last extra to sourceRackType's last
+        let destinationRackLastIndex = RackLastIndex(destinationRackType);
+        const sourceRackTypeLastIndex = RackLastIndex(sourceRackType);
+
+        if (destinationRackLastIndex < sourceRackTypeLastIndex) {
+          destinationRackLastIndex++;
+        }
+
+        const [removed2] = players[playerIndex].playedCards.splice(destinationRackLastIndex, 1);
+        players[playerIndex].playedCards.splice(sourceRackTypeLastIndex, 0, removed2);
+      }
     });
 
     console.log(newPlayers);
@@ -204,15 +247,13 @@ export const GameRoundComponent = (props: {
 
     if (source.droppableId === destination.droppableId) {
         const items = reorder(
-            source.droppableId,
-            source.index,
-            destination.index
+            source,
+            destination
         );
     } else {
         const items = reorder(
-            source.droppableId,
-            source.index,
-            destination.index
+          source,
+          destination
         );
         // const result = move(
         //     this.getCardList(source.droppableId),
@@ -253,7 +294,7 @@ export const GameRoundComponent = (props: {
                           <Droppable 
                             droppableId={`${playerIndex}-${rack.type}`} 
                             direction="horizontal"
-                            isCombineEnabled={true}
+                            // isCombineEnabled={true}
                             >
                             {(provided, snapshot) => (
                               <div
@@ -265,7 +306,7 @@ export const GameRoundComponent = (props: {
                                   <Draggable 
                                     key={`${props.roundIndex}-${cardCode}`} 
                                     draggableId={`${props.roundIndex}-${cardCode}`} 
-                                    index={ RackBaseNumber(rack.type) + cardIndex }>
+                                    index={ RackBaseIndex(rack.type) + cardIndex }>
                                     {(provided, snapshot) => (
                                       <div
                                         ref={provided.innerRef}

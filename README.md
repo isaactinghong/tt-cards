@@ -16,9 +16,11 @@ This project is written in React and boardgame.io
 - [x] display hand with reorder 
 - [x] display duplicate cards' cardCode
 - [ ] compare two players
-  - compareTop
-  - compareMiddle/Bottom
+  - compareTop3
+  - compareMiddle5/Bottom5
   - computeDuelScore(player, againstPlayer)
+	- display the duel results
+- [ ] solve Special Hand
 - [ ] ...
 - [ ] animate the last extra card to new position
 - [ ] highlight the last extra card in dragged over row

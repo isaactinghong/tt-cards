@@ -7,12 +7,26 @@ import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const Hand = require('pokersolver').Hand;
 
-// export interface RoundState {
-//   deck: any;
-//   players: Player[];
-//   // solvedHands: any[];
-//   duplicateCards: string[]
-// }
+interface Duel {
+  // playerId: string;
+  // targetPlayerId: string;
+  compareSpecial?: number;
+  compareTop3?: number;
+  compareMiddle5?: number;
+  compareBottom5?: number;
+  compareTotal?: number;
+}
+
+interface Duels {
+  [duelKey: string]: Duel;
+}
+
+const DuelKey = (player: Player, anotherPlayer: Player) => {
+  if (player.playerIndex > anotherPlayer.playerIndex) {
+    return `${anotherPlayer.playerIndex}-${player.playerIndex}`;
+  }
+  return `${player.playerIndex}-${anotherPlayer.playerIndex}`;
+}
 
 export const GameRoundComponent = (props: { 
   numOfPlayersInRound: number,
@@ -52,7 +66,6 @@ export const GameRoundComponent = (props: {
     });
   }
 
-  const [players, setPlayers] = useState(solveHands(initialPlayers));
 
   // const solveHands = (players: Player[]) => {
   //   const solvedHands: any[] = [];
@@ -86,8 +99,6 @@ export const GameRoundComponent = (props: {
     // console.log('allCards:', allCards);
     return findDuplicates(allCards);
   }
-
-  const [duplicateCards, setDuplicateCards] = useState(findDuplicateCards(players));
 
   const setCard = (
       playerIndex: number,
@@ -207,6 +218,29 @@ export const GameRoundComponent = (props: {
     padding: 2,
     overflow: 'auto',
   });
+
+  const calculateDuels = (iPlayers: Player[]) => {
+    const duels = {} as Duels;
+
+    for (let i = 0; i < iPlayers.length - 1; i++) {
+      for (let j = i + 1; j < iPlayers.length; j++) {
+        const duelKey = DuelKey(iPlayers[i], iPlayers[j]);
+
+        // TODO: calcualte results here
+
+        duels[duelKey] = {
+          // compareTop3: 
+        } as Duel;
+      }
+    }
+
+    return duels;
+  }
+
+
+  const [players, setPlayers] = useState(solveHands(initialPlayers));
+  const [duels, setDuels] = useState(calculateDuels(initialPlayers))
+  const [duplicateCards, setDuplicateCards] = useState(findDuplicateCards(initialPlayers));
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

@@ -1,8 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## 十三張 Chinese poker 
+## Hong Kong Style Chinese poker 十三張
 https://zh.wikipedia.org/wiki/%E5%8D%81%E4%B8%89%E5%BC%B5
 
+This project is written in React and boardgame.io
 
 ### TODO list
 - [x] diplay cards in 3, 5, 5 format

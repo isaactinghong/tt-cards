@@ -162,14 +162,14 @@ export const GameRoundComponent = (props: {
        destinationIndex = destination.index,
       } = destination;
 
-    console.log('sourceDroppableId sourceIndex destinationDroppableId destinationIndex:', 
-      sourceDroppableId, sourceIndex, destinationDroppableId, destinationIndex);
+    // console.log('sourceDroppableId sourceIndex destinationDroppableId destinationIndex:', 
+    //   sourceDroppableId, sourceIndex, destinationDroppableId, destinationIndex);
 
     // extract playerIndex and rack (top3/middle5/bottom5) from droppable id
     const [playerIndexStr, sourceRackType] = sourceDroppableId.split('-');
     const [, destinationRackType] = destinationDroppableId.split('-');
     const playerIndex: number = +playerIndexStr;
-    console.log('playerIndex sourceRackType destinationRackType:', playerIndex, sourceRackType, destinationRackType);
+    // console.log('playerIndex sourceRackType destinationRackType:', playerIndex, sourceRackType, destinationRackType);
 
     const newPlayers = produce(players, (players: Player[]) => {
       // just swap if both in same rack
@@ -199,7 +199,7 @@ export const GameRoundComponent = (props: {
       }
     });
 
-    console.log(newPlayers);
+    // console.log(newPlayers);
     
     // set the card to hands
     setPlayers(newPlayers)

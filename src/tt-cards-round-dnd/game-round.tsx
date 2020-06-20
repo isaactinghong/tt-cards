@@ -15,7 +15,7 @@ export const GameRoundComponent = (props: {
   roundIndex: number
 }) => {
   
-  console.log('to run GameRoundComponent');
+  console.log('to run GameRoundComponent.', props.roundIndex);
 
   let deck = PlayingDeck();
   const initialPlayers = [];
@@ -36,6 +36,7 @@ export const GameRoundComponent = (props: {
     
     initialPlayers.push(player);
   }
+  console.log('GameRoundComponent initialPlayers:', initialPlayers);
 
   const solveHands = (iPlayers: Player[]) => {
 
@@ -52,21 +53,6 @@ export const GameRoundComponent = (props: {
       });
     });
   }
-
-
-  // const solveHands = (players: Player[]) => {
-  //   const solvedHands: any[] = [];
-  //   let playerIndex = 1;
-
-  //   players.map((player: Player) => {
-  //     const solvedHand = Hand.solve(player.top3?.cards);
-
-  //     solvedHand.playerIndex = playerIndex;
-  //     solvedHands.push(solvedHand);
-  //     playerIndex++;
-  //   });
-  //   return solvedHands;s
-  // }
 
   const determineWinner = (solvedHands: any[]) => {
 
@@ -104,7 +90,7 @@ export const GameRoundComponent = (props: {
     // set the card to hands
     setPlayers([...newPlayers]);
     
-    // setDuels(calculateDuels(newPlayers));
+    setDuels(calculateDuels(newPlayers));
     
     setDuplicateCards(findDuplicateCards(newPlayers));
 
@@ -118,10 +104,10 @@ export const GameRoundComponent = (props: {
       sourceIndex = source.index,
      } = source
 
-     let {
-       destinationDroppableId = destination.droppableId,
-       destinationIndex = destination.index,
-      } = destination;
+    let {
+      destinationDroppableId = destination.droppableId,
+      destinationIndex = destination.index,
+    } = destination;
 
     // console.log('sourceDroppableId sourceIndex destinationDroppableId destinationIndex:', 
     //   sourceDroppableId, sourceIndex, destinationDroppableId, destinationIndex);
@@ -177,7 +163,7 @@ export const GameRoundComponent = (props: {
     
     setPlayers([...newPlayers]);
     
-    // setDuels(calculateDuels(newPlayers));
+    setDuels(calculateDuels(newPlayers));
   }
 
   const getItemStyle = (snapshot: any, draggableStyle: any) => ({
@@ -207,18 +193,29 @@ export const GameRoundComponent = (props: {
 
     for (let i = 0; i < iPlayers.length - 1; i++) {
       for (let j = i + 1; j < iPlayers.length; j++) {
+
         const duelKey = DuelKey(iPlayers[i], iPlayers[j]);
         console.log('duelKey',duelKey);
 
+        let duelResult = {
+          // compareTop3: 
+        } as Duel;
+
         // calcualte results here
         // TODO: compare top3
-        const compareTop3: any[] = determineWinner([iPlayers[i].top3Hand, iPlayers[j].top3Hand]);
-        if (compareTop3.length == 1) {
-          const winningHand = compareTop3[0];
-          console.log('compareTop3winner hand:', winningHand);
-          console.log('compareTop3winner handplayer:', winningHand.playerIndex);
+        const top3WinnerHands: any[] = determineWinner([iPlayers[i].top3Hand, iPlayers[j].top3Hand]);
+        if (top3WinnerHands.length == 1) {
+          const winningHand = top3WinnerHands[0];
+          // console.log('compareTop3winner winningHand:', winningHand);
+          // console.log('compareTop3winner winningHand player:', winningHand.playerIndex);
           const winningScore = Top3HandScore(winningHand);
-          console.log('winningHand winningScore', winningHand, winningScore);
+          // console.log('compareTop3winner winningScore', winningScore);
+
+          duelResult = {
+            ...duelResult,
+            compareTop3: winningHand.playerIndex == i ? winningScore : -winningScore,
+          } as Duel;
+           
         }
         // console.log('compareTop3',compareTop3);
         
@@ -231,11 +228,10 @@ export const GameRoundComponent = (props: {
         // TODO: compare special hand
 
 
-        duels[duelKey] = {
-          // compareTop3: 
-        } as Duel;
+        duels[duelKey] = duelResult;
       }
     }
+    console.log('duels become:', duels);
 
     return duels;
   }

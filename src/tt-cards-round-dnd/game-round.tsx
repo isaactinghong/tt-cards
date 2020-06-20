@@ -1,37 +1,21 @@
 import React, { useState } from "react";
 import { CardComponent } from "./card";
 import produce from "immer";
-import { Player, RACK_TYPE } from "./player";
+import { Player } from "./player";
 import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Duels, DuelKey, Duel, Top3HandScore } from "./duels";
+import { RackLastIndex, RackBaseIndex } from "./card-rack";
+import { findDuplicates } from "./helper-functions";
 const Hand = require('pokersolver').Hand;
-
-interface Duel {
-  // playerId: string;
-  // targetPlayerId: string;
-  compareSpecial?: number;
-  compareTop3?: number;
-  compareMiddle5?: number;
-  compareBottom5?: number;
-  compareTotal?: number;
-}
-
-interface Duels {
-  [duelKey: string]: Duel;
-}
-
-const DuelKey = (player: Player, anotherPlayer: Player) => {
-  if (player.playerIndex > anotherPlayer.playerIndex) {
-    return `${anotherPlayer.playerIndex}-${player.playerIndex}`;
-  }
-  return `${player.playerIndex}-${anotherPlayer.playerIndex}`;
-}
 
 export const GameRoundComponent = (props: { 
   numOfPlayersInRound: number,
   roundIndex: number
 }) => {
+  
+  console.log('to run GameRoundComponent');
 
   let deck = PlayingDeck();
   const initialPlayers = [];
@@ -57,10 +41,13 @@ export const GameRoundComponent = (props: {
 
     return produce(iPlayers, draftPlayers => {
 
-      draftPlayers.map((draftPlayer: Player) => {
+      draftPlayers.map((draftPlayer: Player, playerIndex: number) => {
         draftPlayer.top3Hand = Hand.solve(draftPlayer.top3Cards);
+        draftPlayer.top3Hand.playerIndex = playerIndex;
         draftPlayer.middle5Hand = Hand.solve(draftPlayer.middle5Cards);
+        draftPlayer.middle5Hand.playerIndex = playerIndex;
         draftPlayer.bottom5Hand = Hand.solve(draftPlayer.bottom5Cards);
+        draftPlayer.bottom5Hand.playerIndex = playerIndex;
         return true;
       });
     });
@@ -78,19 +65,19 @@ export const GameRoundComponent = (props: {
   //     solvedHands.push(solvedHand);
   //     playerIndex++;
   //   });
-  //   return solvedHands;
+  //   return solvedHands;s
   // }
 
-  // const determineWinner = (solvedHands: any[]) => {
+  const determineWinner = (solvedHands: any[]) => {
 
-  //   const winnerHands = Hand.winners(solvedHands);
-  //   const winnerplayerIndexs = winnerHands.map((hand: any) => hand.playerIndex);
-  //   for (const solvedHand of solvedHands) {
-  //     if (winnerplayerIndexs.some((winnerplayerIndex: any) => winnerplayerIndex === solvedHand.playerIndex)) {
-  //       solvedHand.isWinner = true;
-  //     }
-  //   }
-  // }
+    const winnerHands = Hand.winners(solvedHands);
+    // const winnerPlayerIndexs = winnerHands.map((hand: any) => hand.playerIndex);
+    // const filterSolvedHands = solvedHands.filter(o => winnerPlayerIndexs?.includes(o.playerIndex) ?? false);
+    // for (const solvedHand of filterSolvedHands) {
+    //   solvedHand.isWinner = true;
+    // }
+    return winnerHands;
+  }
   
   const findDuplicateCards = (players: Player[]) => {
     
@@ -117,19 +104,11 @@ export const GameRoundComponent = (props: {
     // set the card to hands
     setPlayers([...newPlayers]);
     
+    // setDuels(calculateDuels(newPlayers));
+    
     setDuplicateCards(findDuplicateCards(newPlayers));
 
-
-    // solveHands
-    // const solvedHands = solveHands(newHands);
-    
-    // setSolvedHands(solvedHands);
-    // determineWinner
-    // determineWinner(solvedHands);
   }
-
-  // determineWinner(solvedHands);
-    
 
   // a little function to help us with reordering the result
   const reorder = (iPlayers: Player[], source: any, destination: any) => {
@@ -197,6 +176,8 @@ export const GameRoundComponent = (props: {
     newPlayers = solveHands(newPlayers);
     
     setPlayers([...newPlayers]);
+    
+    // setDuels(calculateDuels(newPlayers));
   }
 
   const getItemStyle = (snapshot: any, draggableStyle: any) => ({
@@ -220,13 +201,35 @@ export const GameRoundComponent = (props: {
   });
 
   const calculateDuels = (iPlayers: Player[]) => {
+    console.log('calculateDuels start');
+
     const duels = {} as Duels;
 
     for (let i = 0; i < iPlayers.length - 1; i++) {
       for (let j = i + 1; j < iPlayers.length; j++) {
         const duelKey = DuelKey(iPlayers[i], iPlayers[j]);
+        console.log('duelKey',duelKey);
 
-        // TODO: calcualte results here
+        // calcualte results here
+        // TODO: compare top3
+        const compareTop3: any[] = determineWinner([iPlayers[i].top3Hand, iPlayers[j].top3Hand]);
+        if (compareTop3.length == 1) {
+          const winningHand = compareTop3[0];
+          console.log('compareTop3winner hand:', winningHand);
+          console.log('compareTop3winner handplayer:', winningHand.playerIndex);
+          const winningScore = Top3HandScore(winningHand);
+          console.log('winningHand winningScore', winningHand, winningScore);
+        }
+        // console.log('compareTop3',compareTop3);
+        
+        // TODO: compare middle5
+        const compareMiddle5: any[] = determineWinner([iPlayers[i].middle5Hand, iPlayers[j].middle5Hand]);
+        
+        // TODO: compare bottom5
+        const compareBottom5: any[] = determineWinner([iPlayers[i].bottom5Hand, iPlayers[j].bottom5Hand]);
+
+        // TODO: compare special hand
+
 
         duels[duelKey] = {
           // compareTop3: 
@@ -265,7 +268,7 @@ export const GameRoundComponent = (props: {
                         <div key={rackIndex}>
                           <div className="row rack-title">
                             <div className="col s12">
-                              Hand: { rack.hand()?.descr }
+                              { rack.hand()?.descr }
                             </div>
                           </div>
                           <div className="row draggable-rack">
@@ -326,45 +329,4 @@ export const GameRoundComponent = (props: {
     </DragDropContext>
   );
 
-}
-
-
-const RackBaseIndex = (rackType: RACK_TYPE) => { 
-  switch (rackType) {
-    case RACK_TYPE.MIDDLE5: 
-      return 3;
-    case RACK_TYPE.BOTTOM5: 
-      return 8;
-    default: 
-      return 0;
-  }
-}
-
-const RackLastIndex = (rackType: RACK_TYPE) => { 
-  switch (rackType) {
-    case RACK_TYPE.MIDDLE5: 
-      return 7;
-    case RACK_TYPE.BOTTOM5: 
-      return 12;
-    default: 
-      return 2;
-  }
-}
-
-function hasDuplicates(array: any[]) {
-  return (new Set(array)).size !== array.length;
-}
-
-const findDuplicates = (arr: any[]) => {
-  let sorted_arr = arr.slice().sort(); // You can define the comparing function here. 
-  // JS by default uses a crappy string compare.
-  // (we use slice to clone the array so the
-  // original array won't be modified)
-  let results = [];
-  for (let i = 0; i < sorted_arr.length - 1; i++) {
-    if (sorted_arr[i + 1] == sorted_arr[i]) {
-      results.push(sorted_arr[i]);
-    }
-  }
-  return results;
 }

@@ -20,6 +20,7 @@ This project is written in React and boardgame.io
   - compareMiddle5/Bottom5
   - computeDuelScore(player, againstPlayer)
 	- display the duel results
+- [ ] solve Own Goal (擺烏龍)
 - [ ] solve Special Hand
 - [ ] ...
 - [ ] animate the last extra card to new position

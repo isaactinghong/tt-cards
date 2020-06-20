@@ -18,7 +18,7 @@ function App() {
       </nav>
       {/* <TTTBoard /> */}      
       <MainRoundsDndComponent
-        numOfRounds={2}
+        numOfRounds={1}
         numOfPlayersInRound={2}
         // numOfCardsDrawn={4}
          />

@@ -1,9 +1,4 @@
-
-export enum RACK_TYPE {
-  TOP3 = 'TOP3',
-  MIDDLE5='MIDDLE3',
-  BOTTOM5='BOTTOM5',
-}
+import { RACK_TYPE } from "./card-rack";
 
 export class Player {
   playerIndex: number = -1;

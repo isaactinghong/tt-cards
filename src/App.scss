@@ -15,12 +15,16 @@ header {
 }
 
 .player-title {
-  font-size: 1.2em;
+  font-size: 1.3em;
 }
 
 .playing-card {
   > .input-field {
-    margin-top:0em;
-    height:2em;
+    margin-top: 0em;
+    height: 2em;
   }
 }
+
+// .player-hand.row {
+//   margin-bottom: 0px;
+// }

@@ -5,7 +5,7 @@ import { Player } from "./player";
 import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Duels, DuelKey, Duel, Top3HandScore, Bottom5HandScore, Middle5HandScore } from "./duels";
+import { Duels, DuelKey, Duel, Top3HandScore, Bottom5HandScore, Middle5HandScore, DuelAgainst } from "./duels";
 import { RackLastIndex, RackBaseIndex } from "./card-rack";
 import { findDuplicates } from "./helper-functions";
 const Hand = require('pokersolver').Hand;
@@ -294,16 +294,12 @@ export const GameRoundComponent = (props: {
 
           const matchLeft = duelKey[0] === playerIndex.toString();
           if (matchLeft) {
-            draftPlayer.roundScore += duelResult[duelKey]?.compareTop3 ?? 0;
-            draftPlayer.roundScore += duelResult[duelKey]?.compareMiddle5 ?? 0;
-            draftPlayer.roundScore += duelResult[duelKey]?.compareBottom5 ?? 0;
+            draftPlayer.roundScore += duelResult[duelKey]?.compareTotal ?? 0;
           }
           else {
             const matchRight = duelKey[2] === playerIndex.toString();
             if (matchRight) {
-              draftPlayer.roundScore -= duelResult[duelKey]?.compareTop3 ?? 0;
-              draftPlayer.roundScore -= duelResult[duelKey]?.compareMiddle5 ?? 0;
-              draftPlayer.roundScore -= duelResult[duelKey]?.compareBottom5 ?? 0;
+              draftPlayer.roundScore -= duelResult[duelKey]?.compareTotal ?? 0;
             }
           } 
   
@@ -319,7 +315,7 @@ export const GameRoundComponent = (props: {
   // run once
   useEffect(() => {
     refreshRoundResults(players)
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -334,23 +330,37 @@ export const GameRoundComponent = (props: {
         </div>
         <div className="col s11">
           <div className="row">
-            { JSON.stringify(duels) }
-          </div>
-          <div className="row">
             { players.map((player: Player, playerIndex: number) => {
                 return (
                   <div className="col s6" key={playerIndex}>
                     <div className="row">
                       <div className="player-title">Player {player.playerIndex + 1}</div>
+                      <div className="player-score">Round Score: { player.roundScore }</div>
+                      <div className="player-hand row">
+                        { players
+                            .filter(againstPlayer => againstPlayer !== player)
+                            .map((againstPlayer: Player) =>
+                              (
+                                <div className="col s4">
+                                  <div>Against Player {againstPlayer.playerIndex + 1}:</div>
+                                  <div>
+                                    { [DuelAgainst(player, againstPlayer, duels)]
+                                      .map((duel: Duel) => {
+                                        return (
+                                          <div>{duel.compareTop3} | {duel.compareMiddle5} | {duel.compareBottom5}, total: {duel.compareTotal}</div>
+                                        );
+                                      })
+                                    }
+                                  </div>
+                                </div>
+                              )
+                            )
+                        }
+                      </div>
                     </div>
                     { player.racks.map((rack, rackIndex: number) => {
                       return (
                         <div key={rackIndex}>
-                          <div className="row rack-title">
-                            <div className="col s12">
-                              { rack.hand()?.descr }
-                            </div>
-                          </div>
                           <div className="row draggable-rack">
                             <Droppable 
                               droppableId={`${playerIndex}-${rack.type}`} 
@@ -395,6 +405,11 @@ export const GameRoundComponent = (props: {
                                 </div>
                               )}
                             </Droppable>
+                          </div>
+                          <div className="row rack-title">
+                            <div className="col s12">
+                              { rack.hand()?.descr }
+                            </div>
                           </div>
                         </div>
                       );

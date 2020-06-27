@@ -15,11 +15,29 @@ export interface Duels {
   [duelKey: string]: Duel;
 }
 
-export const DuelKey = (player: Player, anotherPlayer: Player) => {
-  if (player.playerIndex > anotherPlayer.playerIndex) {
-    return `${anotherPlayer.playerIndex}-${player.playerIndex}`;
+export const DuelAgainst = (player: Player, againstPlayer: Player, duels: Duels) => {
+  const duelKey = DuelKey(player, againstPlayer);
+  const duel = duels[duelKey];
+  const matchLeft = duelKey[0] === player.playerIndex.toString();
+  if (matchLeft) {
+    return duel;
   }
-  return `${player.playerIndex}-${anotherPlayer.playerIndex}`;
+  else {
+    const newDuel = {...duel};
+    newDuel.compareSpecial = (duel.compareSpecial ?? 0) * -1;
+    newDuel.compareTop3 = (duel.compareTop3 ?? 0) * -1;
+    newDuel.compareMiddle5 = (duel.compareMiddle5 ?? 0) * -1;
+    newDuel.compareBottom5 = (duel.compareBottom5 ?? 0) * -1;
+    newDuel.compareTotal = (duel.compareTotal ?? 0) * -1;
+    return newDuel;
+  }
+}
+
+export const DuelKey = (player: Player, againstPlayer: Player) => {
+  if (player.playerIndex > againstPlayer.playerIndex) {
+    return `${againstPlayer.playerIndex}-${player.playerIndex}`;
+  }
+  return `${player.playerIndex}-${againstPlayer.playerIndex}`;
 }
 
 export const Top3HandScore = (hand: any): number => {

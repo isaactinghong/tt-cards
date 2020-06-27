@@ -316,7 +316,7 @@ export const GameRoundComponent = (props: {
   }, [])
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <div>
       <div className="row">
         <div className="col s6">
           <h5 className="page-title teal-text text-darken-3">Round #{ props.roundIndex + 1 }</h5>
@@ -354,63 +354,65 @@ export const GameRoundComponent = (props: {
                           )
                       }
                     </div>
-                    { player.racks.map((rack, rackIndex: number) => {
-                      return (
-                        <div key={rackIndex}>
-                          <div className="row rack-title">
-                            <div className="col s12">
-                              { rack.hand()?.descr }
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      { player.racks.map((rack, rackIndex: number) => {
+                        return (
+                          <div key={rackIndex}>
+                            <div className="row rack-title">
+                              <div className="col s12">
+                                { rack.hand()?.descr }
+                              </div>
                             </div>
-                          </div>
-                          <div className="row draggable-rack">
-                            <Droppable 
-                              droppableId={`${playerIndex}-${rack.type}`} 
-                              direction="horizontal"
-                              // isCombineEnabled={true}
-                              >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  style={getCardListStyle(snapshot.isDraggingOver)}
-                                  {...provided.droppableProps}
-                                >
-                                  {rack.cards().map((cardCode: string, cardIndex: number) => (
-                                    <Draggable 
-                                      key={`${props.roundIndex}-${cardCode}-${cardIndex}`} 
-                                      draggableId={`${playerIndex}-${props.roundIndex}-${cardCode}`} 
-                                      index={ RackBaseIndex(rack.type) + cardIndex }>
-                                      {(provided, snapshot) => (
-                                        <div
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}
-                                          className="col s2"
-                                          style={getItemStyle(
-                                            snapshot,
-                                            provided.draggableProps.style
+                              <div className="row draggable-rack">
+                                <Droppable
+                                  droppableId={`${playerIndex}-${rack.type}`} 
+                                  direction="horizontal"
+                                  // isCombineEnabled={true}
+                                  >
+                                  {(provided, snapshot) => (
+                                    <div
+                                      ref={provided.innerRef}
+                                      style={getCardListStyle(snapshot.isDraggingOver)}
+                                      {...provided.droppableProps}
+                                    >
+                                      {rack.cards().map((cardCode: string, cardIndex: number) => (
+                                        <Draggable 
+                                          key={`${props.roundIndex}-${cardCode}-${cardIndex}`} 
+                                          draggableId={`${playerIndex}-${props.roundIndex}-${cardCode}`} 
+                                          index={ RackBaseIndex(rack.type) + cardIndex }>
+                                          {(provided, snapshot) => (
+                                            <div
+                                              ref={provided.innerRef}
+                                              {...provided.draggableProps}
+                                              {...provided.dragHandleProps}
+                                              className="col s2"
+                                              style={getItemStyle(
+                                                snapshot,
+                                                provided.draggableProps.style
+                                              )}
+                                            >
+                                              
+                                              <CardComponent 
+                                                cardId={`${playerIndex}-${cardCode}`}
+                                                handIndex={playerIndex}
+                                                cardIndex={RackBaseIndex(rack.type) + cardIndex}
+                                                cardCode={cardCode} 
+                                                setCard={setCard}
+                                              />
+                                            </div>
                                           )}
-                                        >
-                                          
-                                          <CardComponent 
-                                            cardId={`${playerIndex}-${cardCode}`}
-                                            handIndex={playerIndex}
-                                            cardIndex={RackBaseIndex(rack.type) + cardIndex}
-                                            cardCode={cardCode} 
-                                            setCard={setCard}
-                                          />
-                                        </div>
-                                      )}
-                                    </Draggable>
-                                  ))}
-                                  {provided.placeholder}
-                                </div>
-                              )}
-                            </Droppable>
+                                        </Draggable>
+                                      ))}
+                                      {provided.placeholder}
+                                    </div>
+                                  )}
+                                </Droppable>
+                              </div>
                           </div>
-                        </div>
-                      );
-                      })
-                    }
+                        );
+                        })
+                      }
+                    </DragDropContext>
                   </div>
                 );
               }) }
@@ -418,7 +420,7 @@ export const GameRoundComponent = (props: {
         </div>
       </div>
       <div className="divider"></div>
-    </DragDropContext>
+    </div>
   );
 
 }

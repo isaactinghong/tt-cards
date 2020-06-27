@@ -202,11 +202,9 @@ export const GameRoundComponent = (props: {
           determineWinner([iPlayers[i].top3Hand, iPlayers[j].top3Hand]),
           Top3HandScore
         );
-        if (top3Score !== 0) {
-          duelResult = {
-            ...duelResult,
-            compareTop3: top3Score,
-          }
+        duelResult = {
+          ...duelResult,
+          compareTop3: top3Score,
         }
         
         // compare middle5
@@ -215,11 +213,9 @@ export const GameRoundComponent = (props: {
           determineWinner([iPlayers[i].middle5Hand, iPlayers[j].middle5Hand]),
           Middle5HandScore
         );
-        if (middle5Score !== 0) {
-          duelResult = {
-            ...duelResult,
-            compareMiddle5: middle5Score,
-          }
+        duelResult = {
+          ...duelResult,
+          compareMiddle5: middle5Score,
         }
         
         // compare bottom5
@@ -228,11 +224,9 @@ export const GameRoundComponent = (props: {
           determineWinner([iPlayers[i].bottom5Hand, iPlayers[j].bottom5Hand]),
           Bottom5HandScore
         );
-        if (bottom5Score !== 0) {
-          duelResult = {
-            ...duelResult,
-            compareBottom5: bottom5Score,
-          }
+        duelResult = {
+          ...duelResult,
+          compareBottom5: bottom5Score,
         }
 
         // TODO: compare special hand

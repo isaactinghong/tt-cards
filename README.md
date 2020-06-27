@@ -15,7 +15,7 @@ This project is written in React and boardgame.io
 - [x] display hand with setCard 
 - [x] display hand with reorder 
 - [x] display duplicate cards' cardCode
-- [ ] compare two players
+- [x] compare two players
   - compareTop3
   - compareMiddle5/Bottom5
   - computeDuelScore(player, againstPlayer)

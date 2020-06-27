@@ -1,6 +1,5 @@
 import { Player } from "./player";
 import { HandType } from "./hand";
-const Poker = require('pokersolver');
 
 export interface Duel {
   // playerId: string;
@@ -23,7 +22,7 @@ export const DuelKey = (player: Player, anotherPlayer: Player) => {
   return `${player.playerIndex}-${anotherPlayer.playerIndex}`;
 }
 
-export const Top3HandScore = (hand: any) => {
+export const Top3HandScore = (hand: any): number => {
   
   switch (hand.constructor) {
     case HandType.ThreeOfAKind:
@@ -33,7 +32,7 @@ export const Top3HandScore = (hand: any) => {
   }
 };
 
-export const Middle5HandScore = (hand: any) => {
+export const Middle5HandScore = (hand: any): number => {
   
   switch (hand.constructor) {
     case HandType.WildRoyalFlush:
@@ -54,7 +53,7 @@ export const Middle5HandScore = (hand: any) => {
 };
 
 
-export const Bottom5HandScore = (hand: any) => {
+export const Bottom5HandScore = (hand: any): number => {
   
   switch (hand.constructor) {
     case HandType.WildRoyalFlush:

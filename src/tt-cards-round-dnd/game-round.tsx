@@ -306,6 +306,8 @@ export const GameRoundComponent = (props: {
   const [duels, setDuels] = useState(() => calculateDuels(players));
   const [duplicateCards, setDuplicateCards] = useState(() => findDuplicateCards(players));
 
+  useEffect(() => { setPlayers(initializePlayers()) }, [props.numOfPlayersInRound])
+
   // run once
   useEffect(() => {
     refreshRoundResults(players)
@@ -316,45 +318,50 @@ export const GameRoundComponent = (props: {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="row">
-        <div className="col s1">
-          <div className="row">
-            <div>#{ props.roundIndex + 1 }</div>
-            <div className="col s12"><div className='red-text'>{ duplicateCards.length ? '重覆:' + duplicateCards.join(',') : ''}</div></div>
-          </div>
+        <div className="col s6">
+          <h5 className="page-title teal-text text-darken-3">Round #{ props.roundIndex + 1 }</h5>
+          <div className='red-text'>{ duplicateCards.length ? '重覆:' + duplicateCards.join(',') : ''}</div>
         </div>
-        <div className="col s11">
+      </div>
+      <div className="row round-details">
+        <div className="col s12">
           <div className="row">
             { players.map((player: Player, playerIndex: number) => {
                 return (
                   <div className="col s6" key={playerIndex}>
-                    <div className="row">
-                      <div className="player-title">Player {player.playerIndex + 1}</div>
-                      <div className="player-score">Round Score: { player.roundScore }</div>
-                      <div className="player-hand row">
-                        { players
-                            .filter(againstPlayer => againstPlayer !== player)
-                            .map((againstPlayer: Player) =>
-                              (
-                                <div className="col s4">
-                                  <div>Against Player {againstPlayer.playerIndex + 1}:</div>
-                                  <div>
-                                    { [DuelAgainst(player, againstPlayer, duels)]
-                                      .map((duel: Duel) => {
-                                        return (
-                                          <div>{duel.compareTop3} | {duel.compareMiddle5} | {duel.compareBottom5}, total: {duel.compareTotal}</div>
-                                        );
-                                      })
-                                    }
-                                  </div>
+                    <div className="player-title">Player {player.playerIndex + 1}</div>
+                    <div className="player-score">Round Score: <strong>{ player.roundScore }</strong></div>
+                    <div className="player-hand row">
+                      { players
+                          .filter(againstPlayer => againstPlayer !== player)
+                          .map((againstPlayer: Player, againstPlayerIndex: number) =>
+                            (
+                              <div className="col s4" key={againstPlayerIndex}>
+                                <div>Against Player {againstPlayer.playerIndex + 1}:</div>
+                                <div>
+                                  { [DuelAgainst(player, againstPlayer, duels)]
+                                    .map((duel: Duel, duelIndex: number) => {
+                                      return (
+                                        <div key={duelIndex}>
+                                          {duel.compareTop3} | {duel.compareMiddle5} | {duel.compareBottom5}, total: <strong>{duel.compareTotal}</strong>
+                                        </div>
+                                      );
+                                    })
+                                  }
                                 </div>
-                              )
+                              </div>
                             )
-                        }
-                      </div>
+                          )
+                      }
                     </div>
                     { player.racks.map((rack, rackIndex: number) => {
                       return (
                         <div key={rackIndex}>
+                          <div className="row rack-title">
+                            <div className="col s12">
+                              { rack.hand()?.descr }
+                            </div>
+                          </div>
                           <div className="row draggable-rack">
                             <Droppable 
                               droppableId={`${playerIndex}-${rack.type}`} 
@@ -400,11 +407,6 @@ export const GameRoundComponent = (props: {
                               )}
                             </Droppable>
                           </div>
-                          <div className="row rack-title">
-                            <div className="col s12">
-                              { rack.hand()?.descr }
-                            </div>
-                          </div>
                         </div>
                       );
                       })
@@ -415,6 +417,7 @@ export const GameRoundComponent = (props: {
           </div>
         </div>
       </div>
+      <div className="divider"></div>
     </DragDropContext>
   );
 

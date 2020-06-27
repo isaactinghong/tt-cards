@@ -28,30 +28,24 @@ class MainRoundsDndComponent extends React.Component<Props, State> {
 
     // const rounds = this.refreshRounds();
 
-    this.state = {
-      ...this.state,
-      // rounds: rounds,
-    };
+    // this.state = {
+    //   ...this.state,
+    //   // rounds: rounds,
+    // };
     
   }
   
-  updateFormData(event: any) {
+  updateFormNumber(event: any) {
     console.log(event.target.name, event.target.value);
     
-    this.setState({
-      ...this.state,
-      [event.target.name]: event.target.value,
-    });
-  }
+    var num: number = + event.target.value;
 
-  updateNumOfRounds(event: any) {
-    console.log(event.target.name, event.target.value);
-    
     this.setState({
       ...this.state,
-      // rounds: this.refreshRounds(event.target.value),
-      [event.target.name]: event.target.value,
+      [event.target.name]: num,
     });
+
+    console.log(this.state);
   }
 
   render() {
@@ -59,30 +53,43 @@ class MainRoundsDndComponent extends React.Component<Props, State> {
       <div>
         <form action="#" className="form-parameters">
 
-          <div className="row">
-          <div className="col s12">
-            <div className="input-field inline">
-              <input 
-                type="number" 
-                name="numOfRounds" 
-                min="1"
-                value={this.state.numOfRounds}
-                onChange={(e) => this.updateNumOfRounds(e)}
-              />
-              <label>Number of rounds:</label>
+          <div className="row form-row">
+            <div className="col s2">
+              <div className="input-field inline">
+                <input 
+                  type="number" 
+                  name="numOfRounds" 
+                  min="1"
+                  value={this.state.numOfRounds}
+                  onChange={(e) => this.updateFormNumber(e)}
+                />
+                <label>Number of rounds:</label>
+              </div>
+            </div>
+            <div className="col s2">
+              <div className="input-field inline"
+                  style={{width: "100%"}}>
+                <input 
+                  type="number" 
+                  name="numOfPlayersInRound" 
+                  min="2"
+                  max="4"
+                  value={this.state.numOfPlayersInRound}
+                  onChange={(e) => this.updateFormNumber(e)}
+                />
+                <label>Number of players:</label>
+              </div>
             </div>
           </div>
-        </div>
         </form>
-        <div>
-          <h5 className="page-title teal-text text-darken-3">Round#</h5>
+        <div className="row">
 
-          <div>
+          <div className="col s12">
             { 
               Array(this.state.numOfRounds).fill(null).map((round: any, roundIndex: number) => {
                 
                 return (
-                  <GameRoundComponent key={roundIndex} roundIndex={roundIndex} numOfPlayersInRound={this.props.numOfPlayersInRound} />
+                  <GameRoundComponent key={roundIndex} roundIndex={roundIndex} numOfPlayersInRound={this.state.numOfPlayersInRound} />
                 );
               })
             }

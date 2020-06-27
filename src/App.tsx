@@ -19,7 +19,7 @@ function App() {
       {/* <TTTBoard /> */}      
       <MainRoundsDndComponent
         numOfRounds={1}
-        numOfPlayersInRound={3}
+        numOfPlayersInRound={4}
         // numOfCardsDrawn={4}
          />
       {/* <MainCompare5

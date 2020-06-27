@@ -6,6 +6,10 @@ header {
    text-align: center; 
 } */
 
+.form-row {
+  margin-bottom: 0px;
+}
+
 .winner.player-title {
   font-size: 1.2em;
 }
@@ -28,3 +32,11 @@ header {
 // .player-hand.row {
 //   margin-bottom: 0px;
 // }
+
+.rack-title {
+  margin-bottom:2px;
+}
+
+.round-details {
+  padding-left: 10px;
+}

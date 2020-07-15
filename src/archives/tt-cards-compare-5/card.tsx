@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardCodeFromCard, CardCodeToImage, IsPlayingCard } from "../tt-cards-game/playing-cards";
+import { CardCodeFromCard, CardCodeToImage, IsPlayingCard } from "../../tt-cards-game/playing-cards";
 import { CompareRound } from "./main-compare5";
 const PokerCard = require('pokersolver').Card;
 

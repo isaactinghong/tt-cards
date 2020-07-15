@@ -1,6 +1,6 @@
 
 import React from 'react';
-import PlayingDeck, { CardCodeToImage, CardCodeFromCard } from '../tt-cards-game/playing-cards';
+import PlayingDeck, { CardCodeToImage, CardCodeFromCard } from '../../tt-cards-game/playing-cards';
 import { produce } from 'immer';
 import { GameRoundComponent, RoundState } from './game-round';
 import { Player } from './player';

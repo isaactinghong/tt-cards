@@ -7,7 +7,7 @@ import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Duels, DuelKey, Duel, Top3HandScore, Bottom5HandScore, Middle5HandScore, DuelAgainst } from "./duels";
 import { RackLastIndex, RackBaseIndex } from "./card-rack";
-import { findDuplicates } from "./helper-functions";
+import { findDuplicates } from "./helpers";
 const Hand = require('pokersolver').Hand;
 
 export const GameRoundComponent = (props: { 

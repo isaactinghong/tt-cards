@@ -147,7 +147,6 @@ export const calculateDuels = (iPlayers: Player[]) => {
         compareTotal: top3Score + middle5Score + bottom5Score,
       }
 
-
       duels[_duelKey] = duelResult;
     }
   }

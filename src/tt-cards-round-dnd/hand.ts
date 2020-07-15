@@ -27,11 +27,19 @@ export enum HandType {
 }
 
 
-export const getWinnerHands = (solvedHands: any[]) => {
+export const getWinnerHands = (solvedHands: any[]): any[] => {
 
   const winnerHands = Hand.winners(solvedHands);
   
   return winnerHands;
+}
+
+export const compareTwoHands = (thisHand: any, againstHand: any) => {
+  const winnerHands = getWinnerHands([thisHand, againstHand]);
+  if (winnerHands.length === 1) {
+    return thisHand === winnerHands[0] ? 1 : -1;
+  }
+  return 0;
 }
 
 

@@ -4,12 +4,17 @@ export class Player {
   playerIndex: number = -1;
   roundScore?: number;
   dealtCards?: string[];
+
   playedCards: string[] = [];
-  // SpecialHand?: SpecialHand
-  
   top3Hand?: any;
   middle5Hand?: any;
   bottom5Hand?: any;
+  isOwnGoal?: boolean;
+  reportOwnGoals?: {
+    targetPlayerIndex: number,
+    correct: boolean
+  }[];
+  // SpecialHand?: SpecialHand
 
   get top3Cards() {
     return this.playedCards?.slice(0, 3);

@@ -5,11 +5,10 @@ import { Player } from "./player";
 import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Duels, duelKey, Duel, top3HandScore, bottom5HandScore, middle5HandScore, duelAgainst, calculateDuels } from "./duels";
+import { Duels, Duel, duelAgainst, calculateDuels } from "./duels";
 import { RackLastIndex, RackBaseIndex } from "./card-rack";
-import { findDuplicates, findDuplicateCards } from "./helpers";
-import { getWinnerHands, solveHandsForPlayers } from "./hand";
-const Hand = require('pokersolver').Hand;
+import { findDuplicateCards } from "./helpers";
+import { solveHandsForPlayers } from "./hand";
 
 export const GameRoundComponent = (props: { 
   numOfPlayersInRound: number,
@@ -199,6 +198,7 @@ export const GameRoundComponent = (props: {
   const [duels, setDuels] = useState(() => calculateDuels(players));
   const [duplicateCards, setDuplicateCards] = useState(() => findDuplicateCards(players));
 
+  // eslint-disable-next-line
   useEffect(() => { setPlayers(initializePlayers()) }, [props.numOfPlayersInRound])
 
   // run once

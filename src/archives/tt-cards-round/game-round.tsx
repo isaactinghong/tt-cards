@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CardComponent } from "./card";
 import produce from "immer";
 import { Player } from "./player";
-import PlayingDeck from "../tt-cards-game/playing-cards";
+import PlayingDeck from "../../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 const Hand = require('pokersolver').Hand;
 

@@ -21,6 +21,15 @@ This project is written in React and boardgame.io
   - computeDuelScore(player, againstPlayer)
 	- display the duel results
 - [ ] solve Own Goal (擺烏龍)
+	- [ ] display if the currently played hands is Own Goal for all players
+- [ ] allow player to report Own Goal
+	- [ ] if report other player Own Goal
+		- Correct: 
+			- invalidate the own goal player hand scores
+			- treat all the own goal player's hands as losing
+			- the reporting player gains 1 point from own goal player
+		- Wrong: 
+			- the reporting player lose 1 point to the own goal player
 - [ ] solve Special Hand
 - [ ] ...
 - [ ] animate the last extra card to new position
@@ -100,7 +109,7 @@ This project is written in React and boardgame.io
 				- confirmedHand: Card[]
 				- reportSpecial: bool
 				- ownGoal: bool
-				- reportOwnGoal
+				- reportOwnGoals: {}[]
 					- targetPlayerId: string
 					- correct: bool
 				- beforeScore: int

@@ -1,3 +1,5 @@
+import { Player } from "./player";
+
 export function hasDuplicates(array: any[]) {
   return (new Set(array)).size !== array.length;
 }
@@ -14,4 +16,12 @@ export const findDuplicates = (arr: any[]) => {
     }
   }
   return results;
+}
+
+export const findDuplicateCards = (players: Player[]) => {
+    
+  const reducer = (acc: any, player: Player) => { acc.push(player.playedCards); return acc; };
+  const allCards = [].concat(...players.reduce(reducer, []));
+  // console.log('allCards:', allCards);
+  return findDuplicates(allCards);
 }

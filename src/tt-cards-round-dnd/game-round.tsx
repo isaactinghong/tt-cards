@@ -5,9 +5,10 @@ import { Player } from "./player";
 import PlayingDeck from "../tt-cards-game/playing-cards";
 import { plainToClass } from "class-transformer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Duels, DuelKey, Duel, Top3HandScore, Bottom5HandScore, Middle5HandScore, DuelAgainst } from "./duels";
+import { Duels, duelKey, Duel, top3HandScore, bottom5HandScore, middle5HandScore, duelAgainst, calculateDuels } from "./duels";
 import { RackLastIndex, RackBaseIndex } from "./card-rack";
-import { findDuplicates } from "./helpers";
+import { findDuplicates, findDuplicateCards } from "./helpers";
+import { getWinnerHands, solveHandsForPlayers } from "./hand";
 const Hand = require('pokersolver').Hand;
 
 export const GameRoundComponent = (props: { 
@@ -39,45 +40,10 @@ export const GameRoundComponent = (props: {
       initialPlayers.push(player);
     }
     
-    initialPlayers = solveHands(initialPlayers);
+    initialPlayers = solveHandsForPlayers(initialPlayers);
 
     console.log('GameRoundComponent initializePlayers.', initialPlayers);
     return initialPlayers;
-  }
-
-  const solveHands = (iPlayers: Player[]) => {
-
-    return produce(iPlayers, draftPlayers => {
-
-      draftPlayers.map((draftPlayer: Player, playerIndex: number) => {
-        draftPlayer.top3Hand = Hand.solve(draftPlayer.top3Cards);
-        draftPlayer.top3Hand.playerIndex = playerIndex;
-        draftPlayer.middle5Hand = Hand.solve(draftPlayer.middle5Cards);
-        draftPlayer.middle5Hand.playerIndex = playerIndex;
-        draftPlayer.bottom5Hand = Hand.solve(draftPlayer.bottom5Cards);
-        draftPlayer.bottom5Hand.playerIndex = playerIndex;
-        return true;
-      });
-    });
-  }
-
-  const determineWinner = (solvedHands: any[]) => {
-
-    const winnerHands = Hand.winners(solvedHands);
-    // const winnerPlayerIndexs = winnerHands.map((hand: any) => hand.playerIndex);
-    // const filterSolvedHands = solvedHands.filter(o => winnerPlayerIndexs?.includes(o.playerIndex) ?? false);
-    // for (const solvedHand of filterSolvedHands) {
-    //   solvedHand.isWinner = true;
-    // }
-    return winnerHands;
-  }
-  
-  const findDuplicateCards = (players: Player[]) => {
-    
-    const reducer = (acc: any, player: Player) => { acc.push(player.playedCards); return acc; };
-    const allCards = [].concat(...players.reduce(reducer, []));
-    // console.log('allCards:', allCards);
-    return findDuplicates(allCards);
   }
 
   const setCard = (
@@ -182,83 +148,10 @@ export const GameRoundComponent = (props: {
     overflow: 'auto',
   });
 
-  const calculateDuels = (iPlayers: Player[]) => {
-    console.log('calculateDuels start');
-
-    const duels = {} as Duels;
-
-    for (let i = 0; i < iPlayers.length - 1; i++) {
-      for (let j = i + 1; j < iPlayers.length; j++) {
-
-        const duelKey = DuelKey(iPlayers[i], iPlayers[j]);
-        console.log('duelKey',duelKey);
-
-        let duelResult = {
-        } as Duel;
-
-        // compare top3
-        const top3Score = calculateScoreForRack(
-          i,
-          determineWinner([iPlayers[i].top3Hand, iPlayers[j].top3Hand]),
-          Top3HandScore
-        );
-        duelResult = {
-          ...duelResult,
-          compareTop3: top3Score,
-        }
-        
-        // compare middle5
-        const middle5Score = calculateScoreForRack(
-          i, 
-          determineWinner([iPlayers[i].middle5Hand, iPlayers[j].middle5Hand]),
-          Middle5HandScore
-        );
-        duelResult = {
-          ...duelResult,
-          compareMiddle5: middle5Score,
-        }
-        
-        // compare bottom5
-        const bottom5Score = calculateScoreForRack(
-          i, 
-          determineWinner([iPlayers[i].bottom5Hand, iPlayers[j].bottom5Hand]),
-          Bottom5HandScore
-        );
-        duelResult = {
-          ...duelResult,
-          compareBottom5: bottom5Score,
-        }
-
-        // TODO: compare special hand
-        
-        // TODO: calculate total
-          duelResult = {
-            ...duelResult,
-            compareTotal: top3Score + middle5Score + bottom5Score,
-          }
-
-
-        duels[duelKey] = duelResult;
-      }
-    }
-    console.log('duels become:', duels);
-
-    return duels;
-  }
-
-  const calculateScoreForRack = (leftPlayerIndex: number, winningHands: any[], rackHandScoreFunc: (hand: any) => number) => {
-    if (winningHands.length === 1) {
-      const winningHand = winningHands[0];
-      const winningScore = rackHandScoreFunc(winningHand);
-
-      return winningHand.playerIndex === leftPlayerIndex ? winningScore : -winningScore;
-    }
-    return 0;
-  }
 
   const refreshRoundResults = (iPlayers: Player[]) => {
     
-    iPlayers = solveHands(iPlayers);
+    iPlayers = solveHandsForPlayers(iPlayers);
 
     const duelResult = calculateDuels(iPlayers);
     setDuels(duelResult);
@@ -339,7 +232,7 @@ export const GameRoundComponent = (props: {
                               <div className="col s4" key={againstPlayerIndex}>
                                 <div>Against Player {againstPlayer.playerIndex + 1}:</div>
                                 <div>
-                                  { [DuelAgainst(player, againstPlayer, duels)]
+                                  { [duelAgainst(player, againstPlayer, duels)]
                                     .map((duel: Duel, duelIndex: number) => {
                                       return (
                                         <div key={duelIndex}>
